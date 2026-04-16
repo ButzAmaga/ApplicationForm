@@ -1,0 +1,235 @@
+"use client";
+
+import { FormErrors, STEPS, ActionState } from "@/lib/types";
+import { stepValidators } from "@/lib/validation";
+import { useCallback, useReducer, useActionState, useTransition } from "react";
+import { Step2Address } from "./address";
+import { Step3Contact } from "./contact";
+import { Step4Family } from "./famMember";
+import { Step1Personal } from "./personalInfo";
+import { StepIndicator } from "./stepIndicator";
+
+
+// ─── State ────────────────────────────────────────────────────────────────────
+interface WizardState {
+  currentStep: number;
+  completedSteps: Set<number>;
+  formData: Partial<FormData>;
+  stepErrors: FormErrors;
+}
+
+type WizardAction =
+  | { type: "SET_FIELD"; field: keyof FormData; value: FormData[keyof FormData] }
+  | { type: "SET_ERRORS"; errors: FormErrors }
+  | { type: "NEXT_STEP" }
+  | { type: "PREV_STEP" }
+  | { type: "GO_TO_STEP"; step: number }
+  | { type: "MARK_COMPLETE"; step: number };
+
+const initialState: WizardState = {
+  currentStep: 1,
+  completedSteps: new Set(),
+  formData: { family_members: [], same_as_present: false },
+  stepErrors: {},
+};
+
+function wizardReducer(state: WizardState, action: WizardAction): WizardState {
+  switch (action.type) {
+    case "SET_FIELD":
+      return { ...state, formData: { ...state.formData, [action.field]: action.value } };
+    case "SET_ERRORS":
+      return { ...state, stepErrors: action.errors };
+    case "NEXT_STEP": {
+      const next = Math.min(state.currentStep + 1, STEPS.length);
+      return {
+        ...state,
+        currentStep: next,
+        completedSteps: new Set([...state.completedSteps, state.currentStep]),
+        stepErrors: {},
+      };
+    }
+    case "PREV_STEP":
+      return { ...state, currentStep: Math.max(state.currentStep - 1, 1), stepErrors: {} };
+    case "GO_TO_STEP":
+      return { ...state, currentStep: action.step, stepErrors: {} };
+    case "MARK_COMPLETE":
+      return { ...state, completedSteps: new Set([...state.completedSteps, action.step]) };
+    default:
+      return state;
+  }
+}
+
+// ─── Initial server action state ──────────────────────────────────────────────
+const initialActionState: ActionState = { success: false, errors: {} };
+
+// ─── Component ────────────────────────────────────────────────────────────────
+export default function ApplicationForm() {
+  const [state, dispatch] = useReducer(wizardReducer, initialState);
+  const [actionState, formAction, isPending] = useActionState(()=> {}, initialActionState);
+  
+
+  const onChange = useCallback(
+    <K extends keyof FormData>(field: K, value: FormData[K]) => {
+      dispatch({ type: "SET_FIELD", field, value });
+      // Clear error for this field
+      dispatch({ type: "SET_ERRORS", errors: {} });
+    },
+    []
+  );
+
+  // ── Navigate forward ────────────────────────────────────────────────────────
+  const handleNext = () => {
+    const isLastDataStep = state.currentStep === STEPS.length - 1;
+    if (isLastDataStep || state.currentStep < STEPS.length - 1) {
+      const validator = stepValidators[state.currentStep - 1];
+      if (validator) {
+        const errors = validator(state.formData);
+        if (Object.keys(errors).length > 0) {
+          dispatch({ type: "SET_ERRORS", errors });
+          return;
+        }
+      }
+    }
+    dispatch({ type: "NEXT_STEP" });
+  };
+
+  // ── Submit (on Review step) ──────────────────────────────────────────────────
+  const handleSubmit = () => {
+    const fd = new FormData();
+    fd.append("payload", JSON.stringify(state.formData));
+    startTransition(() => formAction(fd));
+  };
+
+  const isLastStep = state.currentStep === STEPS.length;
+
+  // ── Success screen ──────────────────────────────────────────────────────────
+  if (actionState.success) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-200 to-base-300 p-4">
+        <div className="card bg-base-100 shadow-2xl max-w-md w-full text-center">
+          <div className="card-body gap-4 py-12">
+            <div className="text-6xl animate-bounce">🎉</div>
+            <h2 className="text-2xl font-bold text-success">Application Submitted!</h2>
+            <p className="text-base-content/60 text-sm">{actionState.message}</p>
+            <div className="badge badge-success badge-lg mx-auto">You're all set</div>
+            <button
+              className="btn btn-primary mt-4"
+              onClick={() => window.location.reload()}
+            >
+              Start New Application
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-base-200 via-base-100 to-base-200 py-6 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-base-content">
+            Application Form
+          </h1>
+          <p className="text-base-content/50 text-sm mt-1">Fill out all required fields to submit your application</p>
+        </div>
+
+        {/* Step Indicator */}
+        <div className="card bg-base-100 shadow-sm border border-base-300 mb-4">
+          <div className="card-body p-3 sm:p-4">
+            <StepIndicator
+              steps={STEPS}
+              currentStep={state.currentStep}
+              completedSteps={state.completedSteps}
+            />
+          </div>
+        </div>
+
+        {/* Form Card */}
+        <div className="card bg-base-100 shadow-lg border border-base-300">
+          <div className="card-body p-4 sm:p-6 gap-6">
+            {/* Server action error banner */}
+            {!actionState.success && actionState.message && (
+              <div className="alert alert-error">
+                <span className="text-sm">{actionState.message}</span>
+              </div>
+            )}
+
+            {/* Step content */}
+            <div className="min-h-64">
+              {state.currentStep === 1 && (
+                <Step1Personal data={state.formData} errors={state.stepErrors} onChange={onChange} />
+              )}
+              {state.currentStep === 2 && (
+                <Step2Address data={state.formData} errors={state.stepErrors} onChange={onChange} />
+              )}
+              {state.currentStep === 3 && (
+                <Step3Contact data={state.formData} errors={state.stepErrors} onChange={onChange} />
+              )}
+              {state.currentStep === 4 && (
+                <Step4Family data={state.formData} errors={state.stepErrors} onChange={onChange} />
+              )}
+              {state.currentStep === 5 && (
+                <Step5Review data={state.formData} onEdit={(step) => dispatch({ type: "GO_TO_STEP", step })} />
+              )}
+            </div>
+
+            {/* Navigation */}
+            <div className="flex items-center justify-between pt-4 border-t border-base-300 gap-3">
+              <button
+                type="button"
+                onClick={() => dispatch({ type: "PREV_STEP" })}
+                disabled={state.currentStep === 1}
+                className="btn btn-ghost gap-2"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back
+              </button>
+
+              {/* Step counter */}
+              <span className="text-sm text-base-content/50 hidden sm:block">
+                Step {state.currentStep} of {STEPS.length}
+              </span>
+
+              {isLastStep ? (
+                <button
+                  type="button"
+                  onClick={handleSubmit}
+                  disabled={isPending}
+                  className="btn btn-success gap-2"
+                >
+                  {isPending ? (
+                    <><span className="loading loading-spinner loading-sm" /> Submitting…</>
+                  ) : (
+                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg> Submit Application</>
+                  )}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="btn btn-primary gap-2"
+                >
+                  Continue
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <p className="text-center text-xs text-base-content/30 mt-4">
+          All information is kept confidential and used for application purposes only.
+        </p>
+      </div>
+    </div>
+  );
+}

@@ -9,17 +9,27 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@sparticuz/chromium-min": "^147.0.0",
+    "docx": "^9.6.1",
+    "docxtemplater": "^3.68.5",
+    "docxtemplater-image-module-free": "^1.1.1",
+    "nanoid": "^5.1.9",
     "next": "16.2.3",
+    "pizzip": "^3.2.0",
+    "puppeteer-core": "^24.41.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "daisyui": "^5.5.19",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
+    "puppeteer": "^24.41.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
