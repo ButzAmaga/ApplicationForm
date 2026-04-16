@@ -82,13 +82,7 @@ export default function ApplicationForm() {
     const isLastDataStep = state.currentStep === STEPS.length - 1;
     if (isLastDataStep || state.currentStep < STEPS.length - 1) {
       const validator = stepValidators[state.currentStep - 1];
-      if (validator) {
-        const errors = validator(state.formData);
-        if (Object.keys(errors).length > 0) {
-          dispatch({ type: "SET_ERRORS", errors });
-          return;
-        }
-      }
+
     }
     dispatch({ type: "NEXT_STEP" });
   };
