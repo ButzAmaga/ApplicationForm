@@ -5,6 +5,7 @@ import path from 'path';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import ImageModule from 'docxtemplater-image-module-free'
+import { PersonalSchema } from '@/lib/zod/personalZod';
 
 export async function generateDocumentAction(data: { name: string; avatarPath: string }) {
     // 1. Load the docx template from the public folder
@@ -99,3 +100,38 @@ export async function generateWithForm(data: {
     return buf.toString('base64');
 }
 
+
+function extractFormData(formData: FormData){
+
+    const personalData = {
+      full_name: formData.get("full_name"),
+      position: formData.get("position"),
+      religion: formData.get("religion"),
+      agency: formData.get("agency"),
+      age: formData.get("age"),
+      date_of_birth: formData.get("date_of_birth"),
+      place_of_birth: formData.get("place_of_birth"),
+      height: formData.get("height"),
+      weight: formData.get("weight"),
+      constellation: formData.get("constellation"),
+      sex: formData.get("sex"),
+      civil_status: formData.get("civil_status"),
+      employment_record: formData.get("employment_record"),
+    };
+
+    return personalData
+}
+
+export async function saveDocumentAction(prev:any, formData:FormData) {
+
+    const rawData = extractFormData(formData)
+
+    const parsed = PersonalSchema.safeParse(rawData);
+
+    console.log(parsed.error?.flatten().fieldErrors)
+
+    return {
+        success: parsed.success,
+        errors: parsed.success ? null : parsed.error.flatten().fieldErrors
+    }
+}

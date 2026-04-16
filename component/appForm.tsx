@@ -9,6 +9,7 @@ import { Step4Family } from "./famMember";
 import { Step1Personal } from "./personalInfo";
 import { StepIndicator } from "./stepIndicator";
 import { Step5Review } from "./review";
+import { saveDocumentAction } from "@/actions/biodataAction";
 
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -66,18 +67,8 @@ const initialActionState: ActionState = { success: false, errors: {} };
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function ApplicationForm() {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
-  const [actionState, formAction, isPending] = useActionState(()=> {}, initialActionState);
+  const [formState, action, isPending] = useActionState(saveDocumentAction, initialActionState);
   
-
-  const onChange = useCallback(
-    <K extends keyof FormData>(field: K, value: FormData[K]) => {
-      dispatch({ type: "SET_FIELD", field, value });
-      // Clear error for this field
-      dispatch({ type: "SET_ERRORS", errors: {} });
-    },
-    []
-  );
-
   // ── Navigate forward ────────────────────────────────────────────────────────
   const handleNext = () => {
     const isLastDataStep = state.currentStep === STEPS.length - 1;
@@ -90,10 +81,11 @@ export default function ApplicationForm() {
 
 
 
-  const isLastStep = state.currentStep === STEPS.length;
+  // const isLastStep = state.currentStep === STEPS.length;
+  const isLastStep = true
 
   // ── Success screen ──────────────────────────────────────────────────────────
-  if (actionState.success) {
+  if (state.success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-200 to-base-300 p-4">
         <div className="card bg-base-100 shadow-2xl max-w-md w-full text-center">
@@ -137,21 +129,22 @@ export default function ApplicationForm() {
         </div>
 
         {/* Form Card */}
-        <form action={formAction} className="card bg-base-100 shadow-lg border border-base-300">
+        <form action={action} className="card bg-base-100 shadow-lg border border-base-300">
           <div className="card-body p-4 sm:p-6 gap-6">
             {/* Server action error banner */}
-            {!actionState.success && actionState.message && (
+            {!state.success && state.message && (
               <div className="alert alert-error">
-                <span className="text-sm">{actionState.message}</span>
+                <span className="text-sm">{state.message}</span>
               </div>
             )}
 
             {/* Step content */}
             <div className="min-h-64">
               {state.currentStep === 1 && (
-                <Step1Personal data={state.formData} errors={state.stepErrors} onChange={onChange} />
+                <Step1Personal errors={formState.errors} />
               )}
-              {state.currentStep === 2 && (
+              {/** 
+               *               {state.currentStep === 2 && (
                 <Step2Address data={state.formData} errors={state.stepErrors} onChange={onChange} />
               )}
               {state.currentStep === 3 && (
@@ -163,6 +156,9 @@ export default function ApplicationForm() {
               {state.currentStep === 5 && (
                 <Step5Review data={state.formData} onEdit={(step) => dispatch({ type: "GO_TO_STEP", step })} />
               )}
+               * 
+               */}
+
             </div>
 
             {/* Navigation */}
@@ -186,8 +182,7 @@ export default function ApplicationForm() {
 
               {isLastStep ? (
                 <button
-                  type="button"
-                  onClick={handleSubmit}
+                  type="submit"
                   disabled={isPending}
                   className="btn btn-success gap-2"
                 >
