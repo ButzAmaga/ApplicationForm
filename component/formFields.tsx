@@ -164,16 +164,18 @@ export function Select({
     placeholder,
 }: SelectProps) {
     const [val, setValue] = useState<string>("");
-
+    console.log("value:", val)
     return (
         <Field label={label} errors={errors} required={required} hint={hint}>
             <select
+                key={val} // force reset the select
+                defaultValue={val} // only works with force reset, not value property
                 name={name}
                 required={required}
-                value={val}
                 onChange={(e) => setValue(e.target.value)}
-                className={`select select-bordered w-full transition-all duration-200 focus:select-primary ${error ? "select-error" : ""
+                className={`select select-bordered w-full transition-all duration-200 focus:select-primary ${errors ? "select-error" : ""
                     }`}
+                
             >
                 {placeholder && (
                     <option value="" disabled>
@@ -181,11 +183,24 @@ export function Select({
                     </option>
                 )}
 
-                {options.map((o) => (
-                    <option key={o.value} value={o.value}>
-                        {o.label}
-                    </option>
-                ))}
+                {options.map((o, id) => 
+
+                        <option key={o.value} value={o.value} >
+                            {o.label}
+                        </option>
+                )}
+
+                {errors && (
+                    <div className="mt-1">
+                        {errors.map((error) => (
+                            <p key={error} className="text-error">
+                                {error}
+                            </p>
+                        ))}
+                    </div>
+                )}
+
+          
             </select>
         </Field>
     );

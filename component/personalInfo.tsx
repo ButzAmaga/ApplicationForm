@@ -4,12 +4,12 @@ import { FormErrors } from "@/lib/types";
 import { useRef } from "react";
 import { TextInput, Select, CheckboxGroup, TextArea, NumberInput, DateInput, AvatarUpload } from "./formFields";
 
-const SEX_OPTIONS = ["Male", "Female"];
-const STATUS_OPTIONS = ["Single", "Married", "Divorced"];
+const SEX_OPTIONS = ["male", "female"];
+const STATUS_OPTIONS = ["single", "married", "divorced"];
 
 const CONSTELLATION_OPTIONS = [
-  "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-  "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces",
+  "aries", "taurus", "gemini", "cancer", "leo", "virgo",
+  "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces",
 ].map((c) => ({ value: c, label: c }));
 
 type StepPersonalType = {
