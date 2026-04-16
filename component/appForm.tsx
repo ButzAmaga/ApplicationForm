@@ -8,6 +8,7 @@ import { Step3Contact } from "./contact";
 import { Step4Family } from "./famMember";
 import { Step1Personal } from "./personalInfo";
 import { StepIndicator } from "./stepIndicator";
+import { Step5Review } from "./review";
 
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -87,12 +88,7 @@ export default function ApplicationForm() {
     dispatch({ type: "NEXT_STEP" });
   };
 
-  // ── Submit (on Review step) ──────────────────────────────────────────────────
-  const handleSubmit = () => {
-    const fd = new FormData();
-    fd.append("payload", JSON.stringify(state.formData));
-    startTransition(() => formAction(fd));
-  };
+
 
   const isLastStep = state.currentStep === STEPS.length;
 
@@ -141,7 +137,7 @@ export default function ApplicationForm() {
         </div>
 
         {/* Form Card */}
-        <div className="card bg-base-100 shadow-lg border border-base-300">
+        <form action={formAction} className="card bg-base-100 shadow-lg border border-base-300">
           <div className="card-body p-4 sm:p-6 gap-6">
             {/* Server action error banner */}
             {!actionState.success && actionState.message && (
@@ -217,7 +213,7 @@ export default function ApplicationForm() {
               )}
             </div>
           </div>
-        </div>
+        </form>
 
         {/* Footer */}
         <p className="text-center text-xs text-base-content/30 mt-4">
