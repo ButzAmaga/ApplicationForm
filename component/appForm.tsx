@@ -72,7 +72,7 @@ export default function ApplicationForm() {
   const [formState, action, isPending] = useActionState(saveDocumentAction, initialActionState);
   const [showSubmit, setShowSubmit] = useState(false);
 
-
+  // for executing download of file
   useEffect(() => {
     if (formState.success) {
       const res = formState;
@@ -143,7 +143,7 @@ export default function ApplicationForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-200 via-base-100 to-base-200 py-6 px-4">
+    <div className="min-h-screen bg-linear-to-br from-base-200 via-base-100 to-base-200 py-6 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-6">

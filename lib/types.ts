@@ -13,6 +13,7 @@ export type FormAppErrors = {
     sex?: string[] | undefined;
     civil_status?: string[] | undefined;
     employment_record?: string[] | undefined;
+    avatar?: string[] | undefined;
 } | null
 
 // ─── Family Member ───────────────────────────────────────────────────────────

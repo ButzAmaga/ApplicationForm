@@ -25,7 +25,7 @@ export function Step1Personal({ errors, show } : StepPersonalType) {
     <div className={`space-y-6 ${show ? "opacity-100 h-auto visible" 
     : "opacity-0 h-0 overflow-hidden invisible"}`}>
       {/* ── Avatar ─────────────────────────────────────────────────────── */}
-    <AvatarUpload name={"avatar"}/>
+    <AvatarUpload name={"avatar"} errors={errors?.avatar}/>
 
       {/* ── Identity ───────────────────────────────────────────────────── */}
       <div className="divider text-xs font-semibold tracking-widest text-base-content/50">IDENTITY</div>

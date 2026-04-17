@@ -28,4 +28,7 @@ export const PersonalSchema = z.object({
   civil_status: CivilStatusEnum,
 
   employment_record: z.string().min(5, "Min 5 chars"),
+
+  
 });
+
