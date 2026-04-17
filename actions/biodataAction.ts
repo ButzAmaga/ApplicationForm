@@ -37,7 +37,15 @@ type ContactFormData = {
     whatsapp: string;
 }
 
-type combinedType = PersonalFormData & AddressFormData & ContactFormData & {
+type FamilyMemberFormData = {
+    familyMembers: {
+        name: string;
+        relationship: string;
+        living_together: boolean;
+    }[]
+}
+
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & {
     //avatarBase64: string;
     /*familyMembers: Array<{
         name: string;
@@ -102,11 +110,11 @@ export async function generateWithForm(data: combinedType) {
         //avatar: data.avatarBase64,
 
         // Family members (table)
-        /*members: data.familyMembers.map((m) => ({
+        members: data.familyMembers?.map((m) => ({
             ...m,
-            isYes: m.liveTogether,
-            isNo: !m.liveTogether,
-        })),*/
+            isYes: m.living_together,
+            isNo: !m.living_together,
+        })),
 
         // Sex checkbox helpers (FIXED: use `sex`, not `gender`)
         isMale: data.sex === "male",
@@ -124,24 +132,24 @@ export async function generateWithForm(data: combinedType) {
 }
 
 function extractFamilyMembers(formData: FormData) {
-  const familyMap: Record<number, any> = {};
+    const familyMap: Record<number, any> = {};
 
-  for (const [key, value] of formData.entries()) {
-    const match = key.match(/^family_members_(\d+)_(.+)$/);
+    for (const [key, value] of formData.entries()) {
+        const match = key.match(/^family_members_(\d+)_(.+)$/);
 
-    if (!match) continue;
+        if (!match) continue;
 
-    const index = Number(match[1]);
-    const field = match[2];
+        const index = Number(match[1]);
+        const field = match[2];
 
-    if (!familyMap[index]) {
-      familyMap[index] = { id: index };
+        if (!familyMap[index]) {
+            familyMap[index] = { id: index };
+        }
+
+        familyMap[index][field] = value;
     }
 
-    familyMap[index][field] = value;
-  }
-
-  return Object.values(familyMap);
+    return Object.values(familyMap);
 }
 
 function extractFormData(formData: FormData) {
@@ -175,14 +183,13 @@ function extractFormData(formData: FormData) {
         whatsapp: formData.get("whatsapp"),
     }
 
-    const family = extractFamilyMembers(formData);
-   
+    let family = extractFamilyMembers(formData);
 
     return {
         ...personalData,
         ...address,
         ...contact,
-        family_members: family
+        familyMembers: family
     }
 }
 
@@ -193,14 +200,18 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
     //console.log(rawData)
 
     const parsed = ApplicantSchema.safeParse(rawData);
-    //console.log(parsed)
+    console.log(parsed)
     //return { success: false, error: "Test" }
 
     if (parsed.success) {
         const docBuffer = await generateWithForm({
             ...parsed.data,
             date_of_birth: formatDate(parsed.data.date_of_birth),
-            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.present_address
+            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.present_address,
+            familyMembers: parsed.data.family_members.map(m => ({
+                ...m,
+                living_together: m.living_together == "yes" ? true : false
+            })),
         });
 
         // Save the document or do something with it
