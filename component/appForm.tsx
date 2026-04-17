@@ -10,6 +10,7 @@ import { Step1Personal } from "./personalInfo";
 import { StepIndicator } from "./stepIndicator";
 import { saveDocumentAction } from "@/actions/biodataAction";
 import { Step5Employment } from "./employment";
+import { Step6Education } from "./education";
 
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -109,7 +110,7 @@ export default function ApplicationForm() {
 
 
   //const isLastStep = state.currentStep === STEPS.length;
-  const isLastStep = state.currentStep === 5;
+  const isLastStep = state.currentStep === 6;
   
   useEffect(() => {
     if (isLastStep) {
@@ -190,6 +191,8 @@ export default function ApplicationForm() {
               <Step4Family errors={formState.errors ?? {}} show={state.currentStep == 4} />
 
               <Step5Employment errors={formState.errors ?? {}} show={state.currentStep == 5} />
+
+              <Step6Education errors={formState.errors ?? {}} show={state.currentStep == 6} />
 
               {/*
               {state.currentStep === 5 && (

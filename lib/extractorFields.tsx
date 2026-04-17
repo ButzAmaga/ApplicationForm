@@ -54,3 +54,20 @@ export function extractEmploymentRecords(formData: FormData) {
       : [],
   }));
 }
+
+export function extractEducationRecords(formData: FormData) {
+  const recordMap: Record<number, any> = {};
+
+  for (const [key, value] of formData.entries()) {
+    const match = key.match(/^education_records_(\d+)_(.+)$/);
+    if (!match) continue;
+
+    const index = Number(match[1]);
+    const field = match[2];
+
+    if (!recordMap[index]) recordMap[index] = { id: index };
+    recordMap[index][field] = value;
+  }
+
+  return Object.values(recordMap);
+}
