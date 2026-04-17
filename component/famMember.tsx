@@ -5,21 +5,25 @@ import { nanoid } from "nanoid";
 import { FamilyMember, FormErrors } from "@/lib/types";
 
 
-interface Step4Props {
-  data: Partial<FormData>;
-  errors: FormErrors;
-  onChange: <K extends keyof FormData>(field: K, value: FormData[K]) => void;
+type Step4Props = {
+
+  errors: {
+    
+    family_members?: string[] | undefined;
+    
+  } | null;
+  show: boolean
 }
 
-const emptyMember = (): FamilyMember => ({
-  id: nanoid(8),
-  name: "",
-  relationship: "",
-  phone: "",
-  liveTogether: false,
-});
+type FamilyMember = {
+  id: number;
+  name: string;
+  relationship: string;
+  phone: string;
+  liveTogether: boolean;
+};
 
-export function Step4Family({ data, errors, onChange }: Step4Props) {
+export function Step4Family({  errors, show }: Step4Props) {
   const members: FamilyMember[] = data.family_members ?? [];
 
   const updateMember = useCallback(

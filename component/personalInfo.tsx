@@ -148,9 +148,9 @@ export function Step1Personal({ errors, show } : StepPersonalType) {
       <div className="divider text-xs font-semibold tracking-widest text-base-content/50">EMPLOYMENT</div>
       <TextArea
         label="Employment Record" required
-        hint="Same job experience in the same industry as the position applied for"
+        hint=""
         errors={errors?.employment_record}
-        placeholder="List your relevant work experience..."
+        placeholder="List your relevant work experience... (ex:Same job experience in the same industry as the position applied for)"
         rows={4}
         name="employment_record"
       />

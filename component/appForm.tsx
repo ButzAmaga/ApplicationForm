@@ -172,10 +172,11 @@ export default function ApplicationForm() {
               <Step3Contact errors={formState.errors} show={state.currentStep == 3}   />
        
 
-              {/*
+              
               {state.currentStep === 4 && (
                 <Step4Family data={state.formData} errors={state.stepErrors} onChange={onChange} />
               )}
+              {/*
               {state.currentStep === 5 && (
                 <Step5Review data={state.formData} onEdit={(step) => dispatch({ type: "GO_TO_STEP", step })} />
               )}
