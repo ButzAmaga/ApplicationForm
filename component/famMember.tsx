@@ -1,194 +1,137 @@
-"use client";
-
-import { useCallback } from "react";
-import { nanoid } from "nanoid";
-import { FamilyMember, FormErrors } from "@/lib/types";
-
-
-type Step4Props = {
-
-  errors: {
-    
-    family_members?: string[] | undefined;
-    
-  } | null;
-  show: boolean
-}
+import { useState, useCallback } from "react";
+import { TextInput, DateInput, NumberInput, CheckboxGroup } from "./formFields";
 
 type FamilyMember = {
   id: number;
   name: string;
   relationship: string;
-  phone: string;
-  liveTogether: boolean;
+  live_together: boolean
 };
 
-export function Step4Family({  errors, show }: Step4Props) {
-  const members: FamilyMember[] = data.family_members ?? [];
+type Step4Props = {
+  errors?: {
+    name?: string[] | undefined;
+    relationship?: string[] | undefined;
+    live_together?: string[] | undefined;
+  }[];
+  show: boolean;
+};
 
-  const updateMember = useCallback(
-    (id: string, patch: Partial<FamilyMember>) => {
-      onChange(
-        "family_members",
-        members.map((m) => (m.id === id ? { ...m, ...patch } : m))
-      );
-    },
-    [members, onChange]
-  );
+const emptyMember = (): FamilyMember => ({
+  id: Date.now(),
+  name: "",
+  relationship: "",
+  live_together: false
+});
 
-  const removeMember = (id: string) =>
-    onChange("family_members", members.filter((m) => m.id !== id));
+export function Step4Family({ errors, show }: Step4Props) {
+  const [members, setMembers] = useState<FamilyMember[]>([]);
 
-  const addMember = () =>
-    onChange("family_members", [...members, emptyMember()]);
+
+  const addMember = () => {
+    setMembers((prev) => [...prev, emptyMember()]);
+  };
+
+  const removeMember = (id: number) => {
+    setMembers((prev) => prev.filter((m) => m.id !== id));
+  };
+
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${show? "block" : "hidden"}`}>
+      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-semibold text-base-content">Family Members</h3>
-          <p className="text-xs text-base-content/50 mt-0.5">Add household members or relatives</p>
+          <p className="text-xs text-base-content/50">
+            Add household members or relatives
+          </p>
         </div>
-        <button
-          type="button"
-          onClick={addMember}
-          className="btn btn-primary btn-sm gap-2"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Add Member
+
+        <button type="button" onClick={addMember} className="btn btn-primary btn-sm">
+          + Add Member
         </button>
       </div>
 
+      {/* Empty state */}
       {members.length === 0 && (
         <div className="border-2 border-dashed border-base-300 rounded-xl p-8 text-center">
-          <div className="text-4xl mb-2">👨‍👩‍👧</div>
-          <p className="text-base-content/60 text-sm">No family members added yet.</p>
-          <button type="button" onClick={addMember} className="btn btn-outline btn-primary btn-sm mt-3">
-            + Add First Member
+          <p className="text-sm text-base-content/60">
+            No family members added yet.
+          </p>
+          <button
+            type="button"
+            onClick={addMember}
+            className="btn btn-outline btn-primary btn-sm mt-3"
+          >
+            Add First Member
           </button>
         </div>
       )}
 
-      <div className="space-y-4">
+      {/* Dynamic list */}
+      <div className="space-y-6">
         {members.map((member, idx) => (
-          <div
-            key={member.id}
-            className="card bg-base-200 shadow-sm border border-base-300"
-          >
-            <div className="card-body p-4 gap-3">
-              {/* Card header */}
-              <div className="flex items-center justify-between">
-                <span className="badge badge-primary badge-outline font-semibold">
+          <div key={member.id} className="card bg-base-200 border border-base-300">
+            <div className="card-body p-4 space-y-4">
+
+              {/* Header row */}
+              <div className="flex justify-between items-center">
+                <span className="badge badge-primary">
                   Member #{idx + 1}
                 </span>
+
                 <button
                   type="button"
                   onClick={() => removeMember(member.id)}
-                  className="btn btn-ghost btn-xs text-error hover:bg-error/10"
+                  className="btn btn-ghost btn-xs text-error"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
                   Remove
                 </button>
               </div>
 
-              {/* Fields */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div className="form-control">
-                  <label className="label py-1">
-                    <span className="label-text text-sm font-medium">
-                      Name <span className="text-error">*</span>
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    value={member.name}
-                    onChange={(e) => updateMember(member.id, { name: e.target.value })}
-                    className={`input input-bordered input-sm w-full ${
-                      errors[`family_${idx}_name`] ? "input-error" : ""
-                    }`}
-                    placeholder="Full name"
-                  />
-                  {errors[`family_${idx}_name`] && (
-                    <label className="label py-0.5">
-                      <span className="label-text-alt text-error text-xs">{errors[`family_${idx}_name`]}</span>
-                    </label>
-                  )}
-                </div>
+              {/* GRID FIELDS (your requested format) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                <div className="form-control">
-                  <label className="label py-1">
-                    <span className="label-text text-sm font-medium">
-                      Relationship <span className="text-error">*</span>
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    value={member.relationship}
-                    onChange={(e) => updateMember(member.id, { relationship: e.target.value })}
-                    className={`input input-bordered input-sm w-full ${
-                      errors[`family_${idx}_relationship`] ? "input-error" : ""
-                    }`}
-                    placeholder="e.g. Spouse, Child"
-                  />
-                  {errors[`family_${idx}_relationship`] && (
-                    <label className="label py-0.5">
-                      <span className="label-text-alt text-error text-xs">{errors[`family_${idx}_relationship`]}</span>
-                    </label>
-                  )}
-                </div>
+                <TextInput
+                  label="Name"
+                  required
+                  name={`family_${idx}_name`}
+                  errors={errors?.[`family_${idx}_name`]}
+                  placeholder="Full name"
+                />
 
-                <div className="form-control">
-                  <label className="label py-1">
-                    <span className="label-text text-sm font-medium">Phone</span>
-                    <span className="label-text-alt text-xs text-base-content/50">Optional</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={member.phone}
-                    onChange={(e) => updateMember(member.id, { phone: e.target.value })}
-                    className={`input input-bordered input-sm w-full ${
-                      errors[`family_${idx}_phone`] ? "input-error" : ""
-                    }`}
-                    placeholder="+63 9XX XXX XXXX"
-                  />
-                  {errors[`family_${idx}_phone`] && (
-                    <label className="label py-0.5">
-                      <span className="label-text-alt text-error text-xs">{errors[`family_${idx}_phone`]}</span>
-                    </label>
-                  )}
-                </div>
+                <TextInput
+                  label="Relationship"
+                  required
+                  name={`family_${idx}_relationship`}
+                  errors={errors?.[idx].relationship}
+                  placeholder="e.g. Spouse, Child"
+                />
 
-                <div className="form-control justify-end pb-1">
-                  <label className="flex items-center gap-3 cursor-pointer pt-6">
-                    <input
-                      type="checkbox"
-                      className="checkbox checkbox-primary checkbox-sm"
-                      checked={member.liveTogether}
-                      onChange={(e) => updateMember(member.id, { liveTogether: e.target.checked })}
-                    />
-                    <span className="text-sm">Lives together with you</span>
-                  </label>
-                </div>
+                <CheckboxGroup
+                  label="Living Together"
+                  name={`family_${idx}_live_together`}
+                  options={["yes", "no"]}
+                />
+
+
+
+
               </div>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Add more */}
       {members.length > 0 && (
         <button
           type="button"
           onClick={addMember}
-          className="btn btn-outline btn-primary btn-sm w-full gap-2"
+          className="btn btn-outline btn-primary w-full"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Add Another Member
+          + Add Another Member
         </button>
       )}
     </div>
