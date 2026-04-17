@@ -257,8 +257,9 @@ export function CheckboxGroup({
                         <input
                             type="radio"
                             name={name} // 🔥 important for FormData
-
+                            key={opt}
                             defaultValue={opt}
+                            checked={val === opt}
                             onChange={() => setValue(opt)}
                             required={required}
                             className={`radio radio-primary ${error ? "radio-error" : ""
