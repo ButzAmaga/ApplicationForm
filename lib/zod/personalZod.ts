@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const SexEnum = z.enum(["male", "female"], { error: "Invalid sex" });
-const CivilStatusEnum = z.enum(["single", "married", "divorced"], { error: "Invalid civil status" });
+const CivilStatusEnum = z.enum(["single", "married", "divorce"], { error: "Invalid civil status" });
 const ConstellationEnum = z.enum([
   "aries","taurus","gemini","cancer",
   "leo","virgo","libra","scorpio",

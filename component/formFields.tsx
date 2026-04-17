@@ -26,7 +26,7 @@ export function Field({ label, errors, required, children, hint }: FieldProps) {
             {children}
             {errors && (
 
-                errors.map((error:string, idx:number) => (
+                errors.map((error: string, idx: number) => (
                     <label className="label pt-1" key={idx}>
                         <span className="label-text-alt text-error flex items-center gap-1">
                             <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
@@ -175,7 +175,7 @@ export function Select({
                 onChange={(e) => setValue(e.target.value)}
                 className={`select select-bordered w-full transition-all duration-200 focus:select-primary ${errors ? "select-error" : ""
                     }`}
-                
+
             >
                 {placeholder && (
                     <option value="" disabled>
@@ -183,25 +183,26 @@ export function Select({
                     </option>
                 )}
 
-                {options.map((o, id) => 
+                {options.map((o, id) =>
 
-                        <option key={o.value} value={o.value} >
-                            {o.label}
-                        </option>
+                    <option key={o.value} value={o.value} >
+                        {o.label}
+                    </option>
                 )}
 
-                {errors && (
-                    <div className="mt-1">
-                        {errors.map((error) => (
-                            <p key={error} className="text-error">
-                                {error}
-                            </p>
-                        ))}
-                    </div>
-                )}
 
-          
+
+
             </select>
+            {errors && (
+                <div className="mt-1">
+                    {errors.map((error) => (
+                        <p key={error} className="text-error">
+                            {error}
+                        </p>
+                    ))}
+                </div>
+            )}
         </Field>
     );
 }
@@ -237,8 +238,8 @@ export function CheckboxGroup({
                         <input
                             type="radio"
                             name={name} // 🔥 important for FormData
-                            
-                            defaultChecked={val === opt}
+
+                            defaultValue={opt}
                             onChange={() => setValue(opt)}
                             required={required}
                             className={`radio radio-primary ${error ? "radio-error" : ""
@@ -258,66 +259,66 @@ export function CheckboxGroup({
 
 
 interface AvatarUploadProps {
-  name: string;
-  errors?: string[];
+    name: string;
+    errors?: string[];
 }
 
 export function AvatarUpload({ name, errors }: AvatarUploadProps) {
-  const fileRef = useRef<HTMLInputElement | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-    
-  const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const fileRef = useRef<HTMLInputElement | null>(null);
+    const [preview, setPreview] = useState<string | null>(null);
 
-    // Create preview
-    const url = URL.createObjectURL(file);
-    setPreview(url);
-  };
+    const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-  return (
-    <div className="flex flex-col items-center gap-3">
-      <div
-        className="avatar cursor-pointer group"
-        onClick={() => fileRef.current?.click()}
-      >
-        <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden bg-base-200 flex items-center justify-center relative">
-          {preview ? (
-            <img
-              src={preview}
-              alt="avatar"
-              className="object-cover w-full h-full"
+        // Create preview
+        const url = URL.createObjectURL(file);
+        setPreview(url);
+    };
+
+    return (
+        <div className="flex flex-col items-center gap-3">
+            <div
+                className="avatar cursor-pointer group"
+                onClick={() => fileRef.current?.click()}
+            >
+                <div className="w-24 h-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden bg-base-200 flex items-center justify-center relative">
+                    {preview ? (
+                        <img
+                            src={preview}
+                            alt="avatar"
+                            className="object-cover w-full h-full"
+                        />
+                    ) : (
+                        <span className="text-4xl">🧑</span>
+                    )}
+
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs rounded-full">
+                        Upload
+                    </div>
+                </div>
+            </div>
+
+            <input
+                ref={fileRef}
+                type="file"
+                name={name} // 🔥 important for FormData
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatar}
             />
-          ) : (
-            <span className="text-4xl">🧑</span>
-          )}
 
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs rounded-full">
-            Upload
-          </div>
+            <button
+                type="button"
+                className="btn btn-outline btn-primary btn-xs"
+                onClick={() => fileRef.current?.click()}
+            >
+                {preview ? "Change Photo" : "Upload Photo"}
+            </button>
+
+            {errors && errors.map((error, index) => (
+                <p key={index} className="text-error text-xs">{error}</p>
+            ))}
         </div>
-      </div>
-
-      <input
-        ref={fileRef}
-        type="file"
-        name={name} // 🔥 important for FormData
-        accept="image/*"
-        className="hidden"
-        onChange={handleAvatar}
-      />
-
-      <button
-        type="button"
-        className="btn btn-outline btn-primary btn-xs"
-        onClick={() => fileRef.current?.click()}
-      >
-        {preview ? "Change Photo" : "Upload Photo"}
-      </button>
-
-      {errors && errors.map((error, index) => (
-        <p key={index} className="text-error text-xs">{error}</p>
-      ))}
-    </div>
-  );
+    );
 }

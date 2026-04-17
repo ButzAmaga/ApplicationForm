@@ -2,7 +2,7 @@
 
 import { FormErrors, STEPS, ActionState } from "@/lib/types";
 import { stepValidators } from "@/lib/validation";
-import { useCallback, useReducer, useActionState, useTransition } from "react";
+import { useCallback, useReducer, useActionState, useTransition, useEffect } from "react";
 import { Step2Address } from "./address";
 import { Step3Contact } from "./contact";
 import { Step4Family } from "./famMember";
@@ -68,7 +68,29 @@ const initialActionState: ActionState = { success: false, errors: {} };
 export default function ApplicationForm() {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
   const [formState, action, isPending] = useActionState(saveDocumentAction, initialActionState);
-  
+
+  useEffect(() => {
+    if (formState.success) {
+      const res = formState;
+
+      if(res.file == null) return;
+
+      const blob = new Blob(
+        [Uint8Array.from(atob(res?.file), c => c.charCodeAt(0))],
+        { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
+      );
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = res.filename || "file.docx";
+      a.click();
+
+      URL.revokeObjectURL(url);
+    }
+  }, [formState]);
+
   // ── Navigate forward ────────────────────────────────────────────────────────
   const handleNext = () => {
     const isLastDataStep = state.currentStep === STEPS.length - 1;
@@ -82,7 +104,7 @@ export default function ApplicationForm() {
 
 
   // const isLastStep = state.currentStep === STEPS.length;
-  const isLastStep = true
+  const isLastStep = state.currentStep === 2;
 
   // ── Success screen ──────────────────────────────────────────────────────────
   if (state.success) {
@@ -140,13 +162,13 @@ export default function ApplicationForm() {
 
             {/* Step content */}
             <div className="min-h-64">
-              {state.currentStep === 1 && (
-                <Step1Personal errors={formState.errors} />
-              )}
+
+              <Step1Personal errors={formState.errors} show={state.currentStep == 1} />
+
+
+              <Step2Address errors={formState.errors} show={state.currentStep == 2} />
+
               {/** 
-               *               {state.currentStep === 2 && (
-                <Step2Address data={state.formData} errors={state.stepErrors} onChange={onChange} />
-              )}
               {state.currentStep === 3 && (
                 <Step3Contact data={state.formData} errors={state.stepErrors} onChange={onChange} />
               )}

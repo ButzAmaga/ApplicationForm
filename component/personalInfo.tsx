@@ -5,7 +5,7 @@ import { useRef } from "react";
 import { TextInput, Select, CheckboxGroup, TextArea, NumberInput, DateInput, AvatarUpload } from "./formFields";
 
 const SEX_OPTIONS = ["male", "female"];
-const STATUS_OPTIONS = ["single", "married", "divorced"];
+const STATUS_OPTIONS = ["single", "married", "divorce"];
 
 const CONSTELLATION_OPTIONS = [
   "aries", "taurus", "gemini", "cancer", "leo", "virgo",
@@ -28,13 +28,14 @@ type StepPersonalType = {
         civil_status?: string[] | undefined;
         employment_record?: string[] | undefined;
   } | null;
+  show:boolean;
 }
 
-export function Step1Personal({ errors } : StepPersonalType) {
+export function Step1Personal({ errors, show } : StepPersonalType) {
 
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${show ? "block" : "hidden"}`}>
       {/* ── Avatar ─────────────────────────────────────────────────────── */}
     <AvatarUpload name={"avatar"}/>
 
