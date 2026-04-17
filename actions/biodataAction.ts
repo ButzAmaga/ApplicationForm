@@ -176,15 +176,13 @@ function extractFormData(formData: FormData) {
     }
 
     const family = extractFamilyMembers(formData);
-    console.log("family:", family)
    
-
 
     return {
         ...personalData,
         ...address,
         ...contact,
-        family: family
+        family_members: family
     }
 }
 
@@ -192,11 +190,11 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     const rawData = extractFormData(formData)
 
-    // console.log(rawData)
+    //console.log(rawData)
 
     const parsed = ApplicantSchema.safeParse(rawData);
-    // console.log(parsed)
-    return { success: false, error: "Test" }
+    //console.log(parsed)
+    //return { success: false, error: "Test" }
 
     if (parsed.success) {
         const docBuffer = await generateWithForm({

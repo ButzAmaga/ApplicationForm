@@ -10,7 +10,7 @@ type Step4Props = {
   errors?: {
     name?: string[] | undefined;
     relationship?: string[] | undefined;
-    live_together?: string[] | undefined;
+    living_together?: string[] | undefined;
   }[];
   show: boolean;
 };
@@ -106,9 +106,9 @@ export function Step4Family({ errors, show }: Step4Props) {
 
                 <CheckboxGroup
                   label="Living Together"
-                  name={`family_members_${idx}_live_together`}
+                  name={`family_members_${idx}_living_together`}
                   options={["yes", "no"]}
-                  errors={errors?.[idx]?.live_together}
+                  errors={errors?.[idx]?.living_together}
                 />
 
 
