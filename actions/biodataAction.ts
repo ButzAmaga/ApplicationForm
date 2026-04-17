@@ -75,7 +75,7 @@ export async function generateWithForm(data: combinedType) {
 
     doc.render({
         // Personal info
-        name: data.full_name, 
+        name: data.full_name,
         position: data.position,
         religion: data.religion,
         agency: data.agency,
@@ -85,7 +85,7 @@ export async function generateWithForm(data: combinedType) {
         height: data.height,
         weight: data.weight,
         constellation: data.constellation,
-    
+
 
         // Address
         permanent_address: data.permanent_address,
@@ -123,8 +123,29 @@ export async function generateWithForm(data: combinedType) {
     return buf.toString('base64');
 }
 
+function extractFamilyMembers(formData: FormData) {
+  const familyMap: Record<number, any> = {};
+
+  for (const [key, value] of formData.entries()) {
+    const match = key.match(/^family_members_(\d+)_(.+)$/);
+
+    if (!match) continue;
+
+    const index = Number(match[1]);
+    const field = match[2];
+
+    if (!familyMap[index]) {
+      familyMap[index] = { id: index };
+    }
+
+    familyMap[index][field] = value;
+  }
+
+  return Object.values(familyMap);
+}
 
 function extractFormData(formData: FormData) {
+
 
     const personalData = {
         full_name: formData.get("full_name"),
@@ -154,10 +175,16 @@ function extractFormData(formData: FormData) {
         whatsapp: formData.get("whatsapp"),
     }
 
+    const family = extractFamilyMembers(formData);
+    console.log("family:", family)
+   
+
+
     return {
         ...personalData,
         ...address,
-        ...contact
+        ...contact,
+        family: family
     }
 }
 
@@ -165,11 +192,11 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     const rawData = extractFormData(formData)
 
-    console.log(rawData)
+    // console.log(rawData)
 
     const parsed = ApplicantSchema.safeParse(rawData);
     // console.log(parsed)
-    // return {success:false, error:"Test"}
+    return { success: false, error: "Test" }
 
     if (parsed.success) {
         const docBuffer = await generateWithForm({
@@ -177,7 +204,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
             date_of_birth: formatDate(parsed.data.date_of_birth),
             permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.present_address
         });
-        
+
         // Save the document or do something with it
         return {
             success: true,

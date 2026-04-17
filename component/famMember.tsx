@@ -66,7 +66,7 @@ export function Step4Family({ errors, show }: Step4Props) {
 
       {/* Dynamic list */}
       <div className="space-y-6">
-        {members.map((member, idx) => (
+        {members?.map((member, idx) => (
           <div key={member.id} className="card bg-base-200 border border-base-300">
             <div className="card-body p-4 space-y-4">
 
@@ -91,7 +91,7 @@ export function Step4Family({ errors, show }: Step4Props) {
                 <TextInput
                   label="Name"
                   required
-                  name={`family_${idx}_name`}
+                  name={`family_members_${idx}_name`}
                   errors={errors?.[idx]?.name}
                   placeholder="Full name"
                 />
@@ -99,14 +99,14 @@ export function Step4Family({ errors, show }: Step4Props) {
                 <TextInput
                   label="Relationship"
                   required
-                  name={`family_${idx}_relationship`}
+                  name={`family_members_${idx}_relationship`}
                   errors={errors?.[idx]?.relationship}
                   placeholder="e.g. Spouse, Child"
                 />
 
                 <CheckboxGroup
                   label="Living Together"
-                  name={`family_${idx}_live_together`}
+                  name={`family_members_${idx}_live_together`}
                   options={["yes", "no"]}
                   errors={errors?.[idx]?.live_together}
                 />
