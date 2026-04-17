@@ -8,7 +8,6 @@ import { Step3Contact } from "./contact";
 import { Step4Family } from "./famMember";
 import { Step1Personal } from "./personalInfo";
 import { StepIndicator } from "./stepIndicator";
-import { Step5Review } from "./review";
 import { saveDocumentAction } from "@/actions/biodataAction";
 
 

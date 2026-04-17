@@ -1,3 +1,4 @@
+/** 
 "use client";
 
 
@@ -51,7 +52,7 @@ export function Step5Review({ data, onEdit }: Step5Props) {
         <span className="text-sm">Please review your information before submitting.</span>
       </div>
 
-      {/* Avatar + Name */}
+ 
       <div className="flex items-center gap-4 p-4 bg-base-200 rounded-xl border border-base-300">
         <div className="avatar">
           <div className="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1 overflow-hidden bg-base-300 flex items-center justify-center">
@@ -97,7 +98,7 @@ export function Step5Review({ data, onEdit }: Step5Props) {
         <Row label="WhatsApp"     value={data.whatsapp} />
       </ReviewSection>
 
-      {/* Family Members */}
+
       <div className="card bg-base-200 shadow-sm border border-base-300">
         <div className="card-body p-4 gap-3">
           <div className="flex items-center justify-between">
@@ -131,3 +132,5 @@ export function Step5Review({ data, onEdit }: Step5Props) {
     </div>
   );
 }
+
+*/ 
