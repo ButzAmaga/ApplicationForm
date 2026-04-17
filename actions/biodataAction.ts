@@ -52,7 +52,19 @@ type FamilyMemberFormData = {
     }[]
 }
 
-type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & {
+type EmploymentFormData = {
+    employmentRecords: {
+        from: string;
+        to: string;
+        position: string;
+        reason_for_leaving: string;
+        job_descriptions: string[];   
+        name_address:string
+        
+    }[]
+}
+
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & {
     //avatarBase64: string;
     /*familyMembers: Array<{
         name: string;
@@ -124,6 +136,9 @@ export async function generateWithForm(data: combinedType) {
             isNo: !m.living_together,
         })),
 
+        // job experience
+        experience: data.employmentRecords,
+
         // Sex checkbox helpers (FIXED: use `sex`, not `gender`)
         isMale: data.sex === "male",
         isFemale: data.sex === "female",
@@ -182,6 +197,7 @@ function extractFormData(formData: FormData) {
         ...address,
         ...contact,
         family_members: family,
+        employment_records: employment
     }
 }
 
@@ -193,9 +209,13 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
     console.log("raw", rawData)
 
     const parsed = ApplicantSchema.safeParse(rawData);
-    console.log("parsed",parsed)
-    
-    return { success: false, error: "Test" }
+    console.log("parsed", parsed)
+
+
+    let errorList:string[] = []
+    if(!parsed.success)
+        errorList = Object.keys(parsed.error?.flatten().fieldErrors)
+
 
     if (parsed.success) {
         const docBuffer = await generateWithForm({
@@ -206,7 +226,10 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
                 ...m,
                 living_together: m.living_together == "yes" ? true : false
             })),
-            avatarBase64: Buffer.from(await parsed.data.avatar.arrayBuffer()).toString('base64')
+            avatarBase64: Buffer.from(await parsed.data.avatar.arrayBuffer()).toString('base64'),
+            employmentRecords: parsed.data.employment_records.map((record) => ({
+                ...record,
+            })),
         });
 
         // Save the document or do something with it
@@ -220,7 +243,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     return {
         success: false,
-        message: "Required information is missing from the form. Please check the fields.",
+        message: `Required information is missing from the form. Please check the fields ${errorList.join(", ")}`,
         errors: parsed.error.flatten().fieldErrors
     }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import error from "next/dist/api/error";
-import { type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode, useState, useRef } from "react";
+import { type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode, useState, useRef, useEffect } from "react";
 
 // ─── Field Wrapper ─────────────────────────────────────────────────────────────
 interface FieldProps {
@@ -280,11 +280,20 @@ export function CheckboxGroup({
 interface AvatarUploadProps {
     name: string;
     errors?: string[];
+    toggleReset: number
 }
 
-export function AvatarUpload({ name, errors }: AvatarUploadProps) {
+export function AvatarUpload({ name, errors, toggleReset }: AvatarUploadProps) {
     const fileRef = useRef<HTMLInputElement | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
+
+    useEffect(() => {
+        // When the server action finishes and returns (even with errors), 
+        // we wipe the local state and the physical input.
+
+        if (fileRef.current) fileRef.current.value = "";
+        setPreview(null);
+    }, [toggleReset]); // Triggered every time the errors prop updates
 
     const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

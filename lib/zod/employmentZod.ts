@@ -12,12 +12,10 @@ const jobDescriptionSchema = z
 const employmentRecordSchema = z
   .object({
     from: z
-      .string({ error: "Start date is required" })
-      .date("From must be a valid date (YYYY-MM-DD)"),
+      .string({ error: "Start date is required" }).min(1, "Start date cannot be empty"),
 
     to: z
-      .string({ error: "End date is required" })
-      .date("To must be a valid date (YYYY-MM-DD)"),
+      .string({ error: "End date is required" }).min(1, "End date cannot be empty"),
 
     position: z
       .string({ error: "Position is required" })
@@ -38,17 +36,11 @@ const employmentRecordSchema = z
       .array(jobDescriptionSchema)
       .min(1, "At least one job description is required"),
   })
-  .refine(
-    (data) => new Date(data.from) <= new Date(data.to),
-    {
-      message: "Start date must be before or equal to end date",
-      path: ["to"],
-    }
-  );
+
 
 // ─── Full step schema ────────────────────────────────────────────────────────
 
-export const employmentStepSchema = z.object({
+export const EmploymentSchema = z.object({
   employment_records: z
     .array(employmentRecordSchema)
     .min(1, "At least one employment record is required"),

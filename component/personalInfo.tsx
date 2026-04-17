@@ -1,7 +1,7 @@
 "use client";
 
 import { FormAppErrors, FormErrors } from "@/lib/types";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TextInput, Select, CheckboxGroup, TextArea, NumberInput, DateInput, AvatarUpload } from "./formFields";
 
 const SEX_OPTIONS = ["male", "female"];
@@ -19,13 +19,18 @@ type StepPersonalType = {
 
 export function Step1Personal({ errors, show } : StepPersonalType) {
 
+  const [toggleReset, setToggleReset] = useState<number>(0);
+
+  useEffect(() => {
+    setToggleReset((prev) => prev + 1);
+  }, [errors]);
 
   return (
     
     <div className={`space-y-6 ${show ? "opacity-100 h-auto visible" 
     : "opacity-0 h-0 overflow-hidden invisible"}`}>
       {/* ── Avatar ─────────────────────────────────────────────────────── */}
-    <AvatarUpload name={"avatar"} errors={errors?.avatar}/>
+      <AvatarUpload name={"avatar"} errors={errors?.avatar} toggleReset={toggleReset}/>
 
       {/* ── Identity ───────────────────────────────────────────────────── */}
       <div className="divider text-xs font-semibold tracking-widest text-base-content/50">IDENTITY</div>

@@ -123,18 +123,20 @@ function EmploymentEntry({ idx, onRemove }: EmploymentEntryProps) {
 
         {/* Date range */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <DateInput
+          <TextInput
             label="From"
             required
             name={`employment_records_${idx}_from`}
             errors={[]}
+            hint="e.g. August 2020"
           />
 
-          <DateInput
+          <TextInput
             label="To"
             required
             name={`employment_records_${idx}_to`}
             errors={[]}
+            hint="e.g. Present"
           />
         </div>
 
@@ -149,11 +151,11 @@ function EmploymentEntry({ idx, onRemove }: EmploymentEntryProps) {
           />
 
           <TextInput
-            label="Name and Address"
+            label="Company and Address"
             required
             name={`employment_records_${idx}_name_address`}
             errors={[]}
-            placeholder="Company name and address"
+            hint="e.g.Libon INC, Tarlac City"
           />
 
           <TextInput
