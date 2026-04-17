@@ -2,7 +2,7 @@
 
 import { FormErrors, STEPS, ActionState } from "@/lib/types";
 import { stepValidators } from "@/lib/validation";
-import { useCallback, useReducer, useActionState, useTransition, useEffect } from "react";
+import { useCallback, useReducer, useActionState, useTransition, useEffect, useState } from "react";
 import { Step2Address } from "./address";
 import { Step3Contact } from "./contact";
 import { Step4Family } from "./famMember";
@@ -16,12 +16,12 @@ import { saveDocumentAction } from "@/actions/biodataAction";
 interface WizardState {
   currentStep: number;
   completedSteps: Set<number>;
-  formData: Partial<FormData>;
   stepErrors: FormErrors;
 }
 
+
+
 type WizardAction =
-  | { type: "SET_FIELD"; field: keyof FormData; value: FormData[keyof FormData] }
   | { type: "SET_ERRORS"; errors: FormErrors }
   | { type: "NEXT_STEP" }
   | { type: "PREV_STEP" }
@@ -31,14 +31,11 @@ type WizardAction =
 const initialState: WizardState = {
   currentStep: 1,
   completedSteps: new Set(),
-  formData: { family_members: [], same_as_present: false },
   stepErrors: {},
 };
 
 function wizardReducer(state: WizardState, action: WizardAction): WizardState {
   switch (action.type) {
-    case "SET_FIELD":
-      return { ...state, formData: { ...state.formData, [action.field]: action.value } };
     case "SET_ERRORS":
       return { ...state, stepErrors: action.errors };
     case "NEXT_STEP": {
@@ -62,18 +59,26 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
 }
 
 // ─── Initial server action state ──────────────────────────────────────────────
-const initialActionState: ActionState = { success: false, errors: {} };
+const initialActionState = {
+  success: false,
+  message: "",
+  file: "",
+  filename: "",
+  errors: undefined 
+};
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function ApplicationForm() {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
   const [formState, action, isPending] = useActionState(saveDocumentAction, initialActionState);
+  const [showSubmit, setShowSubmit] = useState(false);
+
 
   useEffect(() => {
     if (formState.success) {
       const res = formState;
 
-      if(res.file == null) return;
+      if (res.file == null) return;
 
       const blob = new Blob(
         [Uint8Array.from(atob(res?.file), c => c.charCodeAt(0))],
@@ -105,16 +110,26 @@ export default function ApplicationForm() {
 
   // const isLastStep = state.currentStep === STEPS.length;
   const isLastStep = state.currentStep === 4;
+  
+  useEffect(() => {
+    if (isLastStep) {
+      // Wait for the animation/transition to finish
+      const timer = setTimeout(() => setShowSubmit(true), 2000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowSubmit(false);
+    }
+  }, [isLastStep]);
 
   // ── Success screen ──────────────────────────────────────────────────────────
-  if (state.success) {
+  if (formState.success) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-200 to-base-300 p-4">
         <div className="card bg-base-100 shadow-2xl max-w-md w-full text-center">
           <div className="card-body gap-4 py-12">
             <div className="text-6xl animate-bounce">🎉</div>
             <h2 className="text-2xl font-bold text-success">Application Submitted!</h2>
-            <p className="text-base-content/60 text-sm">{actionState.message}</p>
+            <p className="text-base-content/60 text-sm">{formState.message}</p>
             <div className="badge badge-success badge-lg mx-auto">You're all set</div>
             <button
               className="btn btn-primary mt-4"
@@ -154,25 +169,25 @@ export default function ApplicationForm() {
         <form action={action} className="card bg-base-100 shadow-lg border border-base-300">
           <div className="card-body p-4 sm:p-6 gap-6">
             {/* Server action error banner */}
-            {!state.success && state.message && (
+            {!formState.success && formState.message && (
               <div className="alert alert-error">
-                <span className="text-sm">{state.message}</span>
+                <span className="text-sm">{formState.message}</span>
               </div>
             )}
 
             {/* Step content */}
             <div className="min-h-64">
 
-              <Step1Personal errors={formState.errors} show={state.currentStep == 1} />
+              <Step1Personal errors={formState.errors ?? {}} show={state.currentStep == 1} />
 
 
-              <Step2Address errors={formState.errors} show={state.currentStep == 2} />
+              <Step2Address errors={formState.errors ?? {}} show={state.currentStep == 2} />
 
 
-              <Step3Contact errors={formState.errors} show={state.currentStep == 3}   />
-       
+              <Step3Contact errors={formState.errors ?? {}} show={state.currentStep == 3} />
 
-              <Step4Family  errors={formState.errors}  show={state.currentStep == 4}/>
+
+              <Step4Family errors={formState.errors ?? {}} show={state.currentStep == 4} />
 
               {/*
               {state.currentStep === 5 && (
@@ -206,7 +221,7 @@ export default function ApplicationForm() {
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="btn btn-success gap-2"
+                  className={`btn btn-success gap-2 ${showSubmit? 'inline-block':'hidden'})}`}
                 >
                   {isPending ? (
                     <><span className="loading loading-spinner loading-sm" /> Submitting…</>

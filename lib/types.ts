@@ -1,3 +1,20 @@
+// ─── Form App Errors ───────────────────────────────────────────────────────────
+export type FormAppErrors = {
+    full_name?: string[] | undefined;
+    position?: string[] | undefined;
+    religion?: string[] | undefined;
+    agency?: string[] | undefined;
+    age?: string[] | undefined;
+    date_of_birth?: string[] | undefined;
+    place_of_birth?: string[] | undefined;
+    height?: string[] | undefined;
+    weight?: string[] | undefined;
+    constellation?: string[] | undefined;
+    sex?: string[] | undefined;
+    civil_status?: string[] | undefined;
+    employment_record?: string[] | undefined;
+} | null
+
 // ─── Family Member ───────────────────────────────────────────────────────────
 export interface FamilyMember {
   id: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormErrors } from "@/lib/types";
+import { FormAppErrors, FormErrors } from "@/lib/types";
 import { useRef } from "react";
 import { TextInput, Select, CheckboxGroup, TextArea, NumberInput, DateInput, AvatarUpload } from "./formFields";
 
@@ -13,21 +13,7 @@ const CONSTELLATION_OPTIONS = [
 ].map((c) => ({ value: c, label: c }));
 
 type StepPersonalType = {
-  errors: {
-        full_name?: string[] | undefined;
-        position?: string[] | undefined;
-        religion?: string[] | undefined;
-        agency?: string[] | undefined;
-        age?: string[] | undefined;
-        date_of_birth?: string[] | undefined;
-        place_of_birth?: string[] | undefined;
-        height?: string[] | undefined;
-        weight?: string[] | undefined;
-        constellation?: string[] | undefined;
-        sex?: string[] | undefined;
-        civil_status?: string[] | undefined;
-        employment_record?: string[] | undefined;
-  } | null;
+  errors: FormAppErrors
   show:boolean;
 }
 

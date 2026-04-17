@@ -16,7 +16,7 @@ interface Step2Props {
 }
 
 
-function CombinedPermanentAddressComponent({ errors }: Step2Props) {
+function CombinedPermanentAddressComponent({ errors }: { errors?: string[] | undefined }) {
   const [same, setSame] = useState(false);
 
   return (
@@ -39,7 +39,7 @@ function CombinedPermanentAddressComponent({ errors }: Step2Props) {
           label="Permanent Address"
           required
           name="permanent_address"
-          errors={errors?.permanent_address}
+          errors={errors}
           placeholder="House No., Street, Barangay, City/Municipality, Province, ZIP"
           rows={3}
         />
@@ -79,7 +79,7 @@ export function Step2Address({ errors,show }: Step2Props) {
       <div className="divider text-xs font-semibold tracking-widest text-base-content/50">
         PERMANENT ADDRESS
       </div>
-      <CombinedPermanentAddressComponent errors={errors} />
+      <CombinedPermanentAddressComponent errors={errors?.permanent_address} />
 
     </div>
   );

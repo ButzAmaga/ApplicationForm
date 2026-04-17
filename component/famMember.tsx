@@ -8,10 +8,8 @@ type FamilyMember = {
 
 type Step4Props = {
   errors?: {
-    name?: string[] | undefined;
-    relationship?: string[] | undefined;
-    living_together?: string[] | undefined;
-  }[];
+    family_members?: string[] | undefined;
+  };
   show: boolean;
 };
 
@@ -92,7 +90,7 @@ export function Step4Family({ errors, show }: Step4Props) {
                   label="Name"
                   required
                   name={`family_members_${idx}_name`}
-                  errors={errors?.[idx]?.name}
+                  errors={[]}
                   placeholder="Full name"
                 />
 
@@ -100,15 +98,22 @@ export function Step4Family({ errors, show }: Step4Props) {
                   label="Relationship"
                   required
                   name={`family_members_${idx}_relationship`}
-                  errors={errors?.[idx]?.relationship}
+                  errors={[]}
                   placeholder="e.g. Spouse, Child"
+                />
+
+                <TextInput
+                  label="Phone"
+                  required
+                  name={`family_members_${idx}_phone`}
+                  errors={[]}
                 />
 
                 <CheckboxGroup
                   label="Living Together"
                   name={`family_members_${idx}_living_together`}
                   options={["yes", "no"]}
-                  errors={errors?.[idx]?.living_together}
+                  errors={[]}
                 />
 
 

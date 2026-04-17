@@ -112,6 +112,7 @@ export async function generateWithForm(data: combinedType) {
         // Family members (table)
         members: data.familyMembers?.map((m) => ({
             ...m,
+            
             isYes: m.living_together,
             isNo: !m.living_together,
         })),
@@ -189,7 +190,7 @@ function extractFormData(formData: FormData) {
         ...personalData,
         ...address,
         ...contact,
-        familyMembers: family
+        family_members: family
     }
 }
 
@@ -197,10 +198,11 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     const rawData = extractFormData(formData)
 
-    //console.log(rawData)
+    
+    console.log("raw", rawData)
 
     const parsed = ApplicantSchema.safeParse(rawData);
-    console.log(parsed)
+    console.log("parsed",parsed)
     //return { success: false, error: "Test" }
 
     if (parsed.success) {
@@ -217,6 +219,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
         // Save the document or do something with it
         return {
             success: true,
+            message: "Created Biodata",
             file: docBuffer,
             filename: "application.docx",
         };
@@ -224,6 +227,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     return {
         success: false,
+        message: "Please check the fields.",
         errors: parsed.error.flatten().fieldErrors
     }
 }
