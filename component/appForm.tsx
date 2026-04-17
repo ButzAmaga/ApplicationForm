@@ -9,6 +9,7 @@ import { Step4Family } from "./famMember";
 import { Step1Personal } from "./personalInfo";
 import { StepIndicator } from "./stepIndicator";
 import { saveDocumentAction } from "@/actions/biodataAction";
+import { Step5Employment } from "./employment";
 
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -107,8 +108,8 @@ export default function ApplicationForm() {
 
 
 
-  // const isLastStep = state.currentStep === STEPS.length;
-  const isLastStep = state.currentStep === 4;
+  //const isLastStep = state.currentStep === STEPS.length;
+  const isLastStep = state.currentStep === 5;
   
   useEffect(() => {
     if (isLastStep) {
@@ -165,7 +166,7 @@ export default function ApplicationForm() {
         </div>
 
         {/* Form Card */}
-        <form action={action} className="card bg-base-100 shadow-lg border border-base-300">
+        <form action={action} encType="multipart/form-data" className="card bg-base-100 shadow-lg border border-base-300">
           <div className="card-body p-4 sm:p-6 gap-6">
             {/* Server action error banner */}
             {!formState.success && formState.message && (
@@ -187,6 +188,8 @@ export default function ApplicationForm() {
 
 
               <Step4Family errors={formState.errors ?? {}} show={state.currentStep == 4} />
+
+              <Step5Employment errors={formState.errors ?? {}} show={state.currentStep == 5} />
 
               {/*
               {state.currentStep === 5 && (

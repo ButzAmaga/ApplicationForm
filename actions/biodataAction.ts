@@ -8,6 +8,7 @@ import ImageModule from 'docxtemplater-image-module-free'
 
 import { formatDate } from '@/lib/date';
 import { ApplicantSchema } from '@/lib/zod/combinedZod';
+import { extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
 
 
 type ImagesFormData= {
@@ -72,7 +73,7 @@ export async function generateWithForm(data: combinedType) {
             const base64Data = tagValue.split(',')[1] || tagValue;
             return Buffer.from(base64Data, 'base64');
         },
-        getSize() { return [150, 150]; }
+        getSize() { return [250, 250]; }
     };
 
     const doc = new Docxtemplater(zip, {
@@ -138,26 +139,6 @@ export async function generateWithForm(data: combinedType) {
     return buf.toString('base64');
 }
 
-function extractFamilyMembers(formData: FormData) {
-    const familyMap: Record<number, any> = {};
-
-    for (const [key, value] of formData.entries()) {
-        const match = key.match(/^family_members_(\d+)_(.+)$/);
-
-        if (!match) continue;
-
-        const index = Number(match[1]);
-        const field = match[2];
-
-        if (!familyMap[index]) {
-            familyMap[index] = { id: index };
-        }
-
-        familyMap[index][field] = value;
-    }
-
-    return Object.values(familyMap);
-}
 
 function extractFormData(formData: FormData) {
 
@@ -192,12 +173,15 @@ function extractFormData(formData: FormData) {
     }
 
     let family = extractFamilyMembers(formData);
+    let employment = extractEmploymentRecords(formData)
+
+    console.log("Employment", employment)
 
     return {
         ...personalData,
         ...address,
         ...contact,
-        family_members: family
+        family_members: family,
     }
 }
 
@@ -210,7 +194,8 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     const parsed = ApplicantSchema.safeParse(rawData);
     console.log("parsed",parsed)
-    // return { success: false, error: "Test" }
+    
+    return { success: false, error: "Test" }
 
     if (parsed.success) {
         const docBuffer = await generateWithForm({

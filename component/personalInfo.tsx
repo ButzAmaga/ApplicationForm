@@ -138,7 +138,7 @@ export function Step1Personal({ errors, show } : StepPersonalType) {
         label="Employment Record" required
         hint=""
         errors={errors?.employment_record}
-        placeholder="List your relevant work experience... (ex:Same job experience in the same industry as the position applied for)"
+        placeholder="List your relevant work experience, make it short... (ex:Same job experience in the same industry as the position applied for or Waiter, Cook, Cleaner)"
         rows={4}
         name="employment_record"
       />

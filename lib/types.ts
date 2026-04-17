@@ -82,5 +82,6 @@ export const STEPS: StepMeta[] = [
   { id: 2, label: "Address",   icon: "🏠", description: "Where you live"         },
   { id: 3, label: "Contact",   icon: "📞", description: "How to reach you"       },
   { id: 4, label: "Family",    icon: "👨‍👩‍👧", description: "Household members"     },
-  { id: 5, label: "Review",    icon: "✅", description: "Confirm & submit"        },
+  { id: 5, label: "Employment Record",    icon: "👨‍👩‍👧", description: "Job Records"     },
+  { id: 6, label: "Review",    icon: "✅", description: "Confirm & submit"        },
 ];
