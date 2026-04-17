@@ -1,11 +1,9 @@
 import { useState, useCallback } from "react";
 import { TextInput, DateInput, NumberInput, CheckboxGroup } from "./formFields";
+import { error } from "console";
 
 type FamilyMember = {
   id: number;
-  name: string;
-  relationship: string;
-  live_together: boolean
 };
 
 type Step4Props = {
@@ -19,9 +17,6 @@ type Step4Props = {
 
 const emptyMember = (): FamilyMember => ({
   id: Date.now(),
-  name: "",
-  relationship: "",
-  live_together: false
 });
 
 export function Step4Family({ errors, show }: Step4Props) {
@@ -97,7 +92,7 @@ export function Step4Family({ errors, show }: Step4Props) {
                   label="Name"
                   required
                   name={`family_${idx}_name`}
-                  errors={errors?.[`family_${idx}_name`]}
+                  errors={errors?.[idx]?.name}
                   placeholder="Full name"
                 />
 
@@ -105,7 +100,7 @@ export function Step4Family({ errors, show }: Step4Props) {
                   label="Relationship"
                   required
                   name={`family_${idx}_relationship`}
-                  errors={errors?.[idx].relationship}
+                  errors={errors?.[idx]?.relationship}
                   placeholder="e.g. Spouse, Child"
                 />
 
@@ -113,6 +108,7 @@ export function Step4Family({ errors, show }: Step4Props) {
                   label="Living Together"
                   name={`family_${idx}_live_together`}
                   options={["yes", "no"]}
+                  errors={errors?.[idx]?.live_together}
                 />
 
 
