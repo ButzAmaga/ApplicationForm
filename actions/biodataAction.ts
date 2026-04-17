@@ -152,6 +152,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
         const docBuffer = await generateWithForm({
             ...parsed.data,
             date_of_birth: formatDate(parsed.data.date_of_birth),
+            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.present_address,
         });
         
         // Save the document or do something with it
