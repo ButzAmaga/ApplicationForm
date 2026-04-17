@@ -5,9 +5,9 @@ import path from 'path';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import ImageModule from 'docxtemplater-image-module-free'
-import { PersonalSchema } from '@/lib/zod/personalZod';
-import { CombinedSchema } from '@/lib/zod/combinedZod';
+
 import { formatDate } from '@/lib/date';
+import { ApplicantSchema } from '@/lib/zod/combinedZod';
 
 type PersonalFormData = {
     full_name: string;
@@ -30,7 +30,14 @@ type AddressFormData = {
     present_address: string
 }
 
-type combinedType = PersonalFormData & AddressFormData & {
+type ContactFormData = {
+    facebook: string
+    email: string;
+    phone_num: string;
+    whatsapp: string;
+}
+
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & {
     //avatarBase64: string;
     /*familyMembers: Array<{
         name: string;
@@ -84,6 +91,13 @@ export async function generateWithForm(data: combinedType) {
         permanent_address: data.permanent_address,
         present_address: data.present_address,
 
+
+        // Contact Info
+        facebook: data.facebook,
+        whatsapp: data.whatsapp,
+        phone_num: data.phone_num,
+        email: data.email,
+
         // Avatar
         //avatar: data.avatarBase64,
 
@@ -133,9 +147,17 @@ function extractFormData(formData: FormData) {
         present_address: formData.get("present_address"),
     }
 
+    const contact = {
+        facebook: formData.get("facebook"),
+        email: formData.get("email"),
+        phone_num: formData.get("phone_num"),
+        whatsapp: formData.get("whatsapp"),
+    }
+
     return {
         ...personalData,
-        ...address
+        ...address,
+        ...contact
     }
 }
 
@@ -145,14 +167,15 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     console.log(rawData)
 
-    const parsed = CombinedSchema.safeParse(rawData);
+    const parsed = ApplicantSchema.safeParse(rawData);
+    // console.log(parsed)
+    // return {success:false, error:"Test"}
 
-    console.log(parsed.success)
     if (parsed.success) {
         const docBuffer = await generateWithForm({
             ...parsed.data,
             date_of_birth: formatDate(parsed.data.date_of_birth),
-            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.present_address,
+            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.present_address
         });
         
         // Save the document or do something with it

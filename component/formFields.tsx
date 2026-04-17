@@ -64,6 +64,25 @@ export function TextInput({ label, name, errors, hint, required = true }: TextIn
     );
 }
 
+// ─── Email Input ────────────────────────────────────────────────────────────────
+
+export function EmailInput({ label, name, errors, hint, required = true }: TextInputProps) {
+    const [val, setValue] = useState<string>("")
+    return (
+        <Field label={label} errors={errors} required={required} hint={hint}>
+            <input
+                required={required}
+                type="email"
+                className={`input input-bordered w-full transition-all duration-200 focus:input-primary ${errors ? "input-error" : ""
+                    }`}
+                onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setValue(ev.target.value)}
+                value={val}
+                name={name}
+            />
+        </Field>
+    );
+}
+
 // ─── Number Input ────────────────────────────────────────────────────────────────
 
 export function NumberInput({ label, name, errors, hint, required = true }: TextInputProps) {

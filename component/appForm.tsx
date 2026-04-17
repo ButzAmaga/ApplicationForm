@@ -104,7 +104,7 @@ export default function ApplicationForm() {
 
 
   // const isLastStep = state.currentStep === STEPS.length;
-  const isLastStep = state.currentStep === 2;
+  const isLastStep = state.currentStep === 3;
 
   // ── Success screen ──────────────────────────────────────────────────────────
   if (state.success) {
@@ -168,10 +168,11 @@ export default function ApplicationForm() {
 
               <Step2Address errors={formState.errors} show={state.currentStep == 2} />
 
-              {/** 
-              {state.currentStep === 3 && (
-                <Step3Contact data={state.formData} errors={state.stepErrors} onChange={onChange} />
-              )}
+
+              <Step3Contact errors={formState.errors} show={state.currentStep == 3}   />
+       
+
+              {/*
               {state.currentStep === 4 && (
                 <Step4Family data={state.formData} errors={state.stepErrors} onChange={onChange} />
               )}
