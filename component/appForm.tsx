@@ -15,6 +15,7 @@ import { Step7Passport } from "./passport";
 import { Step8SkillLanguages } from "./skillAndLanguage";
 import { Step10Declaration } from "./declaration";
 import { Step9Documents } from "./imageDocs";
+import { findMissingFields } from "@/lib/form";
 
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -77,6 +78,7 @@ export default function ApplicationForm() {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
   const [formState, action, isPending] = useActionState(saveDocumentAction, initialActionState);
   const [isReadConfirm, setIsReadConfirm] = useState(false);
+  const [missingFields, setMissingFields] = useState<string[]>([])
 
   // for executing download of file
   useEffect(() => {
@@ -103,11 +105,7 @@ export default function ApplicationForm() {
 
   // ── Navigate forward ────────────────────────────────────────────────────────
   const handleNext = () => {
-    const isLastDataStep = state.currentStep === STEPS.length - 1;
-    if (isLastDataStep || state.currentStep < STEPS.length - 1) {
-      const validator = stepValidators[state.currentStep - 1];
-
-    }
+    setMissingFields(findMissingFields("application-form"));
     dispatch({ type: "NEXT_STEP" });
   };
 
@@ -163,12 +161,29 @@ export default function ApplicationForm() {
         */}
 
         {/* Form Card */}
-        <form action={action} encType="multipart/form-data" className="card bg-base-100 shadow-lg border border-base-300">
+        <form action={action} id="application-form" encType="multipart/form-data" className="card bg-base-100 shadow-lg border border-base-300">
           <div className="card-body p-4 sm:p-6 gap-6">
             {/* Server action error banner */}
             {!formState.success && formState.message && (
               <div className="alert alert-error">
                 <span className="text-sm">{formState.message}</span>
+              </div>
+            )}
+
+            {/* Remaining fields */}
+            {missingFields.length > 0 && isLastStep && (
+              <div className="alert alert-soft alert-info flex flex-col items-start tooltip tooltip-bottom">
+                <div className="tooltip-content flex flex-col">
+                  {missingFields.map((item,id) => <span key={id} className="text-sm text-start">{item}</span>)}
+                </div>
+
+                <div className="flex gap-2">
+                  <svg className="w-5 h-5 text-info shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="tooltip-trigger">Still have {missingFields.length} required fields remaining</span>
+                </div>
+
               </div>
             )}
 
@@ -194,7 +209,7 @@ export default function ApplicationForm() {
 
               <Step8SkillLanguages errors={formState.errors ?? {}} show={state.currentStep == 8} />
 
-              <Step9Documents errors={formState.errors ?? {}} show={state.currentStep == 9} isPending={isPending}/>
+              <Step9Documents errors={formState.errors ?? {}} show={state.currentStep == 9} isPending={isPending} />
 
               <Step10Declaration errors={formState.errors ?? {}} show={state.currentStep == 10} isReadConfirm={isReadConfirm} setIsReadConfirm={setIsReadConfirm} />
 
@@ -211,7 +226,10 @@ export default function ApplicationForm() {
             <div className="flex items-center justify-between pt-4 border-t border-base-300 gap-3">
               <button
                 type="button"
-                onClick={() => dispatch({ type: "PREV_STEP" })}
+                onClick={() => { 
+                  setMissingFields(findMissingFields("application-form"))  
+                  dispatch({ type: "PREV_STEP" })
+                }}
                 disabled={state.currentStep === 1}
                 className="btn btn-ghost gap-2"
               >
@@ -232,7 +250,7 @@ export default function ApplicationForm() {
 
                 <button
                   type="submit"
-                  disabled={isPending || !isReadConfirm}
+                  disabled={isPending || !isReadConfirm || missingFields.length > 0}
                   className={`btn btn-success gap-2`}
                 >
                   {isPending ? (
