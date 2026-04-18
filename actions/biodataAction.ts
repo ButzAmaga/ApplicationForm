@@ -65,7 +65,21 @@ type EmploymentFormData = {
     }[]
 }
 
-type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & {
+type EducationRecord = {
+  level: string;
+  school: string;
+  from: string;
+  to: string;
+  major_course?: string;
+};
+
+type EducationFormData = {
+  educational_attainment: string;
+  education_records: EducationRecord[];
+};
+
+
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & {
     //avatarBase64: string;
     /*familyMembers: Array<{
         name: string;
@@ -221,12 +235,12 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
     if(!parsed.success)
         errorList = Object.keys(parsed.error?.flatten().fieldErrors)
 
-    console.log("Flatten errors:", parsed.error?.flatten().fieldErrors)
-    return {
+    // console.log("Flatten errors:", parsed.error?.flatten().fieldErrors)
+    /*return {
         success:false,
         message: `Error on ${errorList}`,
         errors: parsed.error?.flatten().fieldErrors
-    }
+    }*/
 
     if (parsed.success) {
         const docBuffer = await generateWithForm({
