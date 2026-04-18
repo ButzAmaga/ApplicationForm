@@ -1,7 +1,5 @@
 "use client";
 
-import { isPending } from "@reduxjs/toolkit";
-import error from "next/dist/api/error";
 import { type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode, useState, useRef, useEffect } from "react";
 
 // ─── Field Wrapper ─────────────────────────────────────────────────────────────
@@ -119,7 +117,7 @@ export function DateInput({
             <input
                 required={required}
                 type="date"
-                className={`input input-bordered w-full ${error ? "input-error" : ""
+                className={`input input-bordered w-full ${errors ? "input-error" : ""
                     }`}
                 onChange={(e) => setValue(e.target.value)}
                 value={val}
@@ -155,7 +153,7 @@ export function TextArea({
                 required={required}
                 value={val}
                 onChange={(e) => setValue(e.target.value)}
-                className={`textarea textarea-bordered w-full min-h-20 resize-none transition-all duration-200 focus:textarea-primary ${error ? "textarea-error" : ""
+                className={`textarea textarea-bordered w-full min-h-20 resize-none transition-all duration-200 focus:textarea-primary ${errors? "textarea-error" : ""
                     } ${props.className ?? ""}`}
             />
         </Field>
@@ -262,7 +260,7 @@ export function CheckboxGroup({
                             checked={val === opt}
                             onChange={() => setValue(opt)}
                             required={required}
-                            className={`radio radio-primary ${error ? "radio-error" : ""
+                            className={`radio radio-primary ${errors ? "radio-error" : ""
                                 }`}
                         />
                         <span className="text-sm group-hover:text-primary transition-colors">
