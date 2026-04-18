@@ -13,6 +13,7 @@ import { Step5Employment } from "./employment";
 import { Step6Education } from "./education";
 import { Step7Passport } from "./passport";
 import { Step8SkillLanguages } from "./skillAndLanguage";
+import { Step9Declaration } from "./declaration";
 
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -67,14 +68,14 @@ const initialActionState = {
   message: "",
   file: "",
   filename: "",
-  errors: undefined 
+  errors: undefined
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function ApplicationForm() {
   const [state, dispatch] = useReducer(wizardReducer, initialState);
   const [formState, action, isPending] = useActionState(saveDocumentAction, initialActionState);
-  const [showSubmit, setShowSubmit] = useState(false);
+  const [isReadConfirm, setIsReadConfirm] = useState(false);
 
   // for executing download of file
   useEffect(() => {
@@ -112,17 +113,8 @@ export default function ApplicationForm() {
 
 
   //const isLastStep = state.currentStep === STEPS.length;
-  const isLastStep = state.currentStep === 8;
-  
-  useEffect(() => {
-    if (isLastStep) {
-      // Wait for the animation/transition to finish
-      const timer = setTimeout(() => setShowSubmit(true), 2000);
-      return () => clearTimeout(timer);
-    } else {
-      setShowSubmit(false);
-    }
-  }, [isLastStep]);
+  const isLastStep = state.currentStep === 9;
+
 
   // ── Success screen ──────────────────────────────────────────────────────────
   if (formState.success) {
@@ -199,6 +191,9 @@ export default function ApplicationForm() {
               <Step7Passport errors={formState.errors ?? {}} show={state.currentStep == 7} />
 
               <Step8SkillLanguages errors={formState.errors ?? {}} show={state.currentStep == 8} />
+
+              <Step9Declaration errors={formState.errors ?? {}} show={state.currentStep == 9} isReadConfirm={isReadConfirm} setIsReadConfirm={setIsReadConfirm} />
+
               {/*
               {state.currentStep === 5 && (
                 <Step5Review data={state.formData} onEdit={(step) => dispatch({ type: "GO_TO_STEP", step })} />
@@ -227,11 +222,14 @@ export default function ApplicationForm() {
                 Step {state.currentStep} of {STEPS.length}
               </span>
 
+              { }
+
               {isLastStep ? (
+
                 <button
                   type="submit"
-                  disabled={isPending}
-                  className={`btn btn-success gap-2 ${showSubmit? 'inline-block':'hidden'})}`}
+                  disabled={isPending || !isReadConfirm}
+                  className={`btn btn-success gap-2`}
                 >
                   {isPending ? (
                     <><span className="loading loading-spinner loading-sm" /> Submitting…</>
@@ -242,16 +240,18 @@ export default function ApplicationForm() {
                   )}
                 </button>
               ) : (
-                <button
-                  type="button"
-                  onClick={handleNext}
-                  className="btn btn-primary gap-2"
-                >
-                  Continue
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </button>
+                <div>
+                  <button
+                    type="button"
+                    onClick={handleNext}
+                    className="btn btn-primary gap-2"
+                  >
+                    Continue
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               )}
             </div>
           </div>

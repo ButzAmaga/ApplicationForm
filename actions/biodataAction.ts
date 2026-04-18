@@ -193,7 +193,7 @@ export async function generateWithForm(data: combinedType) {
 
         // Skill Languages
         // Language proficiency helpers
-        hasSkill: data.skill,
+        skill: data.skill,
 
         // English proficiency flags
         is_english_fluent: data.english_speak === "fluent",
