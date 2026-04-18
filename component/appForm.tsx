@@ -119,7 +119,7 @@ export default function ApplicationForm() {
   // ── Success screen ──────────────────────────────────────────────────────────
   if (formState.success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-200 to-base-300 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-base-200 to-base-300 p-4">
         <div className="card bg-base-100 shadow-2xl max-w-md w-full text-center">
           <div className="card-body gap-4 py-12">
             <div className="text-6xl animate-bounce">🎉</div>

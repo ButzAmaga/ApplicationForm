@@ -97,7 +97,14 @@ type SkillLanguagesFormData = {
     other_write?: string;
 };
 
-type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & PassportFormData & SkillLanguagesFormData & {
+type DeclarationFormData = {
+    criminal_record: string;
+    education_certification: string;
+    proof_of_work_experience: string;
+    date_of_application: string;
+};
+
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & PassportFormData & SkillLanguagesFormData & DeclarationFormData & {
     //avatarBase64: string;
     /*familyMembers: Array<{
         name: string;
@@ -221,6 +228,14 @@ export async function generateWithForm(data: combinedType) {
         is_other_write_fluent: data.other_write === "fluent",
         is_other_write_ordinary: data.other_write === "ordinary",
         is_other_write_difference: data.other_write === "difference",
+
+        // declaration
+        has_criminal_record: data.criminal_record === "yes",
+        has_education_certification: data.education_certification === "yes",
+        has_proof_of_work_experience: data.proof_of_work_experience === "yes",
+        date_of_application: data.date_of_application,
+
+        name_and_sig : data.full_name.toUpperCase()
     });
 
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
@@ -260,6 +275,8 @@ function extractFormData(formData: FormData) {
         whatsapp: formData.get("whatsapp"),
     }
 
+
+
     let family = extractFamilyMembers(formData);
     let employment = extractEmploymentRecords(formData)
     let education_records = extractEducationRecords(formData)
@@ -283,6 +300,12 @@ function extractFormData(formData: FormData) {
         other_write: formData.getAll("other_write"),
     }
 
+    const declaration = {
+        criminal_record: formData.get("criminal_record"),
+        education_certification: formData.get("education_certification"),
+        proof_of_work_experience: formData.get("proof_of_work_experience"),
+        date_of_application: formData.get("date_of_application"),
+    };
     return {
         ...personalData,
         ...address,
@@ -293,7 +316,8 @@ function extractFormData(formData: FormData) {
         educational_attainment: formData.get("educational_attainment"),
         education_records,
         ...passport,
-        ...skillLanguages
+        ...skillLanguages,
+        ...declaration
     }
 }
 

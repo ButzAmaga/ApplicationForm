@@ -30,6 +30,3 @@ export const SkillLanguagesSchema = z.object({
     .default("")
 });
 
-export type Step8SkillLanguagesFormData = z.infer<
-  typeof Step8SkillLanguagesSchema
->;
