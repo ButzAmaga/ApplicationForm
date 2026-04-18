@@ -12,8 +12,8 @@ import { extractEducationRecords, extractEmploymentRecords, extractFamilyMembers
 import { success } from 'zod';
 
 
-type ImagesFormData= {
-    avatarBase64:string
+type ImagesFormData = {
+    avatarBase64: string
 }
 
 type PersonalFormData = {
@@ -30,7 +30,7 @@ type PersonalFormData = {
     sex: string;
     civil_status: string;
     employment_record: string;
-    avatar:File
+    avatar: File
 };
 
 type AddressFormData = {
@@ -59,27 +59,33 @@ type EmploymentFormData = {
         to: string;
         position: string;
         reason_for_leaving: string;
-        job_descriptions: string[];   
-        name_address:string
-        
+        job_descriptions: string[];
+        name_address: string
+
     }[]
 }
 
 type EducationRecord = {
-  level: string;
-  school: string;
-  from: string;
-  to: string;
-  major_course?: string;
+    level: string;
+    school: string;
+    from: string;
+    to: string;
+    major_course?: string;
 };
 
 type EducationFormData = {
-  educational_attainment: string;
-  education_records: EducationRecord[];
+    educational_attainment: string;
+    education_records: EducationRecord[];
+};
+
+type PassportFormData = {
+    passport_no: string;
+    passport_valid_from: string;
+    passport_valid_to: string;
 };
 
 
-type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & {
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & PassportFormData & {
     //avatarBase64: string;
     /*familyMembers: Array<{
         name: string;
@@ -146,7 +152,7 @@ export async function generateWithForm(data: combinedType) {
         // Family members (table)
         members: data.familyMembers?.map((m) => ({
             ...m,
-            
+
             isYes: m.living_together,
             isNo: !m.living_together,
         })),
@@ -167,6 +173,11 @@ export async function generateWithForm(data: combinedType) {
 
         // Employment record
         employment_record: data.employment_record,
+
+        // Passport
+        passport_no: data.passport_no,
+        passport_valid_from: data.passport_valid_from,
+        passport_valid_to: data.passport_valid_to
     });
 
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
@@ -210,6 +221,11 @@ function extractFormData(formData: FormData) {
     let employment = extractEmploymentRecords(formData)
     let education_records = extractEducationRecords(formData)
 
+    const passport = {
+        passport_no: formData.get("passport_no"),
+        passport_valid_from: formData.get("passport_valid_from"),
+        passport_valid_to: formData.get("passport_valid_to"),
+    };
 
     return {
         ...personalData,
@@ -219,7 +235,8 @@ function extractFormData(formData: FormData) {
         employment_records: employment,
         // education fields
         educational_attainment: formData.get("educational_attainment"),
-        education_records
+        education_records,
+        ...passport
     }
 }
 
@@ -227,16 +244,16 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     const rawData = extractFormData(formData)
 
-    
+
     console.log("raw", rawData)
 
     const parsed = ApplicantSchema.safeParse(rawData);
-    
+
     console.log("parsed", parsed)
 
 
-    let errorList:string[] = []
-    if(!parsed.success)
+    let errorList: string[] = []
+    if (!parsed.success)
         errorList = Object.keys(parsed.error?.flatten().fieldErrors)
 
     // console.log("Flatten errors:", parsed.error?.flatten().fieldErrors)

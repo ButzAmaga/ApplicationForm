@@ -1,6 +1,5 @@
 "use client";
 
-import { FormErrors } from "@/lib/types";
 import { EmailInput, TextInput } from "./formFields";
 
 
