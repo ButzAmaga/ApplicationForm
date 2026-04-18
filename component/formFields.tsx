@@ -337,6 +337,7 @@ export function AvatarUpload({ name, errors, isPending }: AvatarUploadProps) {
                 accept="image/*"
                 className="hidden"
                 onChange={handleAvatar}
+                required={true}
             />
 
             <button
