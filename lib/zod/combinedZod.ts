@@ -6,6 +6,7 @@ import { FamilySchema } from "./familyZod";
 import { ImageSchema } from "./imageZod";
 import { PassportSchema } from "./passportZod";
 import { PersonalSchema } from "./personalZod";
+import { SkillLanguagesSchema } from "./skillLanguagesZod";
 
 export const ApplicantSchema =
   PersonalSchema
@@ -16,3 +17,4 @@ export const ApplicantSchema =
     .merge(EmploymentSchema)
     .merge(educationStepSchema)
     .merge(PassportSchema)
+    .merge(SkillLanguagesSchema)

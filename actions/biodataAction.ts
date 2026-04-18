@@ -84,8 +84,20 @@ type PassportFormData = {
     passport_valid_to: string;
 };
 
+type SkillLanguagesFormData = {
+    skill?: string;
 
-type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & PassportFormData & {
+    english_speak: string;
+    english_write: string;
+
+    chinese_speak?: string;
+    chinese_write?: string;
+
+    other_speak?: string;
+    other_write?: string;
+};
+
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & PassportFormData & SkillLanguagesFormData & {
     //avatarBase64: string;
     /*familyMembers: Array<{
         name: string;
@@ -177,7 +189,38 @@ export async function generateWithForm(data: combinedType) {
         // Passport
         passport_no: data.passport_no,
         passport_valid_from: data.passport_valid_from,
-        passport_valid_to: data.passport_valid_to
+        passport_valid_to: data.passport_valid_to,
+
+        // Skill Languages
+        // Language proficiency helpers
+        hasSkill: data.skill,
+
+        // English proficiency flags
+        is_english_fluent: data.english_speak === "fluent",
+        is_english_ordinary: data.english_speak === "ordinary",
+        is_english_difference: data.english_speak === "difference",
+
+        is_english_write_fluent: data.english_write === "fluent",
+        is_english_write_ordinary: data.english_write === "ordinary",
+        is_english_write_difference: data.english_write === "difference",
+
+        // Chinese proficiency flags
+        is_chinese_fluent: data.chinese_speak === "fluent",
+        is_chinese_ordinary: data.chinese_speak === "ordinary",
+        is_chinese_difference: data.chinese_speak === "difference",
+
+        is_chinese_write_fluent: data.chinese_write === "fluent",
+        is_chinese_write_ordinary: data.chinese_write === "ordinary",
+        is_chinese_write_difference: data.chinese_write === "difference",
+
+        // Other language proficiency flags
+        is_other_fluent: data.other_speak === "fluent",
+        is_other_ordinary: data.other_speak === "ordinary",
+        is_other_difference: data.other_speak === "difference",
+
+        is_other_write_fluent: data.other_write === "fluent",
+        is_other_write_ordinary: data.other_write === "ordinary",
+        is_other_write_difference: data.other_write === "difference",
     });
 
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
@@ -227,6 +270,19 @@ function extractFormData(formData: FormData) {
         passport_valid_to: formData.get("passport_valid_to"),
     };
 
+    const skillLanguages = {
+        skill: formData.get("skill"),
+
+        english_speak: formData.getAll("english_speak"),
+        english_write: formData.getAll("english_write"),
+
+        chinese_speak: formData.getAll("chinese_speak"),
+        chinese_write: formData.getAll("chinese_write"),
+
+        other_speak: formData.getAll("other_speak"),
+        other_write: formData.getAll("other_write"),
+    }
+
     return {
         ...personalData,
         ...address,
@@ -236,7 +292,8 @@ function extractFormData(formData: FormData) {
         // education fields
         educational_attainment: formData.get("educational_attainment"),
         education_records,
-        ...passport
+        ...passport,
+        ...skillLanguages
     }
 }
 
