@@ -100,7 +100,7 @@ export async function generateWithForm(data: combinedType) {
             const base64Data = tagValue.split(',')[1] || tagValue;
             return Buffer.from(base64Data, 'base64');
         },
-        getSize() { return [250, 250]; }
+        getSize() { return [200, 200]; }
     };
 
     const doc = new Docxtemplater(zip, {
@@ -250,7 +250,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
         const docBuffer = await generateWithForm({
             ...parsed.data,
             date_of_birth: formatDate(parsed.data.date_of_birth),
-            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.present_address,
+            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.permanent_address,
             familyMembers: parsed.data.family_members.map(m => ({
                 ...m,
                 living_together: m.living_together == "yes" ? true : false
