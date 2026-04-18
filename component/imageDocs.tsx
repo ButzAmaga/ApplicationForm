@@ -13,9 +13,10 @@ type Step10Props = {
     additional_documents?: string[] | undefined;
   } | null;
   show: boolean;
+  isPending:boolean
 };
 
-export function Step9Documents({ errors, show }: Step10Props) {
+export function Step9Documents({ errors, show, isPending }: Step10Props) {
   return (
     <div className={`space-y-6 ${show ? "block" : "hidden"}`}>
       <div className="divider text-xs font-semibold tracking-widest text-base-content/50">
@@ -28,7 +29,8 @@ export function Step9Documents({ errors, show }: Step10Props) {
           name="whole_body_picture"
           required
           errors={errors?.whole_body_picture}
-          hint="210x297 A4 size"
+          hint="file size < 800kb"
+          isPending={isPending}
         />
 
         <ImageUploadA4
@@ -36,7 +38,8 @@ export function Step9Documents({ errors, show }: Step10Props) {
           name="passport"
           required
           errors={errors?.passport}
-          hint="210x297 A4 size"
+          hint="file size < 800kb"
+          isPending={isPending}
         />
 
         <ImageUploadA4
@@ -44,7 +47,8 @@ export function Step9Documents({ errors, show }: Step10Props) {
           name="certificate_of_employment"
           required
           errors={errors?.certificate_of_employment}
-          hint="210x297 A4 size"
+          hint="file size < 800kb"
+          isPending={isPending}
         />
       </div>
 
@@ -54,7 +58,8 @@ export function Step9Documents({ errors, show }: Step10Props) {
         label="Additional Documents"
         required
         errors={errors?.additional_documents}
-        hint="210x297 A4 size"
+        hint="file size < 800kb"
+        isPending={isPending}
       />
 
       {/* Upload tips */}

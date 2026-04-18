@@ -1,5 +1,6 @@
 "use client";
 
+import { isPending } from "@reduxjs/toolkit";
 import error from "next/dist/api/error";
 import { type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode, useState, useRef, useEffect } from "react";
 
@@ -280,12 +281,20 @@ export function CheckboxGroup({
 interface AvatarUploadProps {
     name: string;
     errors?: string[];
+    isPending:boolean
 }
 
-export function AvatarUpload({ name, errors }: AvatarUploadProps) {
+export function AvatarUpload({ name, errors, isPending }: AvatarUploadProps) {
     const fileRef = useRef<HTMLInputElement | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
+    // reset the preview upon submit
+    useEffect(()=>{
+
+        if(isPending)
+            setPreview(null)
+
+    },[isPending])
 
     const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -319,7 +328,7 @@ export function AvatarUpload({ name, errors }: AvatarUploadProps) {
                 </div>
             </div>
 
-            <p className="text-xs text-gray-500">2x2 Head to Neck Picture</p>
+            <p className="text-xs text-gray-500">2x2 Head to Neck White Background Picture</p>
 
             <input
                 ref={fileRef}

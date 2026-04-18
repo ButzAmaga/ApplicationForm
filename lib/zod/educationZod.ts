@@ -38,7 +38,7 @@ export const educationStepSchema = z.object({
 
     education_records: z
         .array(educationRecordSchema)
-        .min(1, "At least one education record is required"),
+        .optional(),
 });
 
 export type EducationStepInput = z.infer<typeof educationStepSchema>;

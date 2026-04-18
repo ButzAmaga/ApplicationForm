@@ -175,7 +175,7 @@ export default function ApplicationForm() {
             {/* Step content */}
             <div className="min-h-64">
 
-              <Step1Personal errors={formState.errors ?? {}} show={state.currentStep == 1} />
+              <Step1Personal errors={formState.errors ?? {}} show={state.currentStep == 1} isPending={isPending} />
 
 
               <Step2Address errors={formState.errors ?? {}} show={state.currentStep == 2} />
@@ -194,7 +194,7 @@ export default function ApplicationForm() {
 
               <Step8SkillLanguages errors={formState.errors ?? {}} show={state.currentStep == 8} />
 
-              <Step9Documents errors={formState.errors ?? {}} show={state.currentStep == 9} />
+              <Step9Documents errors={formState.errors ?? {}} show={state.currentStep == 9} isPending={isPending}/>
 
               <Step10Declaration errors={formState.errors ?? {}} show={state.currentStep == 10} isReadConfirm={isReadConfirm} setIsReadConfirm={setIsReadConfirm} />
 

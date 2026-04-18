@@ -10,6 +10,7 @@ import { formatDate } from '@/lib/date';
 import { ApplicantSchema } from '@/lib/zod/combinedZod';
 import { extractEducationRecords, extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
 import { success } from 'zod';
+import sizeOf from 'image-size'
 
 
 type ImagesFormData = {
@@ -50,7 +51,7 @@ type ContactFormData = {
 }
 
 type FamilyMemberFormData = {
-    familyMembers: {
+    familyMembers?: {
         name: string;
         relationship: string;
         living_together: boolean;
@@ -79,7 +80,7 @@ type EducationRecord = {
 
 type EducationFormData = {
     educational_attainment: string;
-    education_records: EducationRecord[];
+    education_records?: EducationRecord[]; // optional
 };
 
 type PassportFormData = {
@@ -131,13 +132,14 @@ export async function generateWithForm(data: combinedType) {
         getSize(img:any, _tagValue: string, tagName: string, context?: any) {
             // 1. Handle the small 2x2 photo
             if (tagName === "avatar" || tagName === "pic2x2") {
-                return [192, 192]; // 2x2 inches = 192px at 96 DPI
+                return [210, 210]; // 2x2 inches = 192px at 96 DPI
             }
 
             // 2. Use the image's intrinsic size for everything else
-            if (img && img.size) {
+            const dimensions = sizeOf(img);
+            if(dimensions) {
                 // Return the original dimensions [width, height]
-                return [img.size.width, img.size.height];
+                return [dimensions.width, dimensions.height];
             }
 
             // 3. Fallback if metadata is missing (Standard A4 @ 96DPI)
@@ -209,14 +211,14 @@ export async function generateWithForm(data: combinedType) {
 
             isYes: m.living_together,
             isNo: !m.living_together,
-        })),
+        })) || [],
 
         // job experience
         experience: data.employmentRecords,
 
         // education
         education_attainment: data.educational_attainment,
-        education_records: data.education_records,
+        education_records: data.education_records || [],
 
         // Sex checkbox helpers (FIXED: use `sex`, not `gender`)
         isMale: data.sex === "male",
@@ -399,14 +401,14 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
             ...parsed.data,
             date_of_birth: formatDate(parsed.data.date_of_birth),
             permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.permanent_address,
-            familyMembers: parsed.data.family_members.map(m => ({
+            familyMembers: parsed.data.family_members?.map(m => ({
                 ...m,
                 living_together: m.living_together == "yes" ? true : false
-            })),
+            })) || [],
             avatarBase64: Buffer.from(await parsed.data.avatar.arrayBuffer()).toString('base64'),
-            employmentRecords: parsed.data.employment_records.map((record) => ({
+            employmentRecords: parsed.data.employment_records?.map((record) => ({
                 ...record,
-            })),
+            })) || [],
 
             // Step 9 Documents
             whole_body_picture_base64: Buffer.from(await parsed.data.whole_body_picture.arrayBuffer()).toString('base64'),

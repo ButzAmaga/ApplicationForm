@@ -20,5 +20,5 @@ const FamilyMemberSchema = z.object({
 });
 
 export const FamilySchema = z.object({
-    family_members: z.array(FamilyMemberSchema)
+    family_members: z.array(FamilyMemberSchema).optional()
 });

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type A4Image = {
   id: string;
@@ -14,6 +14,7 @@ type MultiA4UploaderProps = {
   errors?: string[];
   maxFiles?: number;
   hint?: string;
+  isPending:boolean
 };
 
 export function MultiA4Uploader({
@@ -23,11 +24,18 @@ export function MultiA4Uploader({
   errors,
   maxFiles = 10,
   hint,
+  isPending
 }: MultiA4UploaderProps) {
   const [images, setImages] = useState<A4Image[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const counter = useRef(0);
+
+    useEffect(()=>{
+        if(!isPending) return
+
+        setImages([])
+    }, [isPending])
 
   const createEntry = (file: File, preview: string): A4Image => {
     counter.current += 1;

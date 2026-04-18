@@ -13,6 +13,7 @@
     "docx": "^9.6.1",
     "docxtemplater": "^3.68.5",
     "docxtemplater-image-module-free": "^1.1.1",
+    "image-size": "^2.0.2",
     "nanoid": "^5.1.9",
     "next": "16.2.3",
     "pizzip": "^3.2.0",

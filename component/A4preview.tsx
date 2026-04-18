@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type ImageUploadA4Props = {
   label?: string;
@@ -8,6 +8,7 @@ type ImageUploadA4Props = {
   required?: boolean;
   errors?: string[];
   hint?: string;
+  isPending:boolean
 };
 
 export function ImageUploadA4({
@@ -16,10 +17,17 @@ export function ImageUploadA4({
   required = false,
   errors,
   hint,
+  isPending
 }: ImageUploadA4Props) {
   const [preview, setPreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // reset the preview upon submit
+    useEffect(() => {
+        if(isPending)
+            setPreview(null)
+    }, [isPending])
 
   const handleFile = (file: File) => {
     if (!file.type.startsWith("image/")) return;

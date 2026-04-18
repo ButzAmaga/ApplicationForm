@@ -15,16 +15,17 @@ const CONSTELLATION_OPTIONS = [
 type StepPersonalType = {
   errors: FormAppErrors
   show:boolean;
+  isPending:boolean
 }
 
-export function Step1Personal({ errors, show } : StepPersonalType) {
+export function Step1Personal({ errors, show, isPending } : StepPersonalType) {
 
   return (
     
     <div className={`space-y-6 ${show ? "opacity-100 h-auto visible" 
     : "opacity-0 h-0 overflow-hidden invisible"}`}>
       {/* ── Avatar ─────────────────────────────────────────────────────── */}
-      <AvatarUpload name={"avatar"} errors={errors?.avatar}/>
+      <AvatarUpload name={"avatar"} errors={errors?.avatar} isPending={isPending}/>
 
       {/* ── Identity ───────────────────────────────────────────────────── */}
       <div className="divider text-xs font-semibold tracking-widest text-base-content/50">IDENTITY</div>
