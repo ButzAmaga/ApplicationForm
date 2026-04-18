@@ -9,6 +9,7 @@ import ImageModule from 'docxtemplater-image-module-free'
 import { formatDate } from '@/lib/date';
 import { ApplicantSchema } from '@/lib/zod/combinedZod';
 import { extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
+import { success } from 'zod';
 
 
 type ImagesFormData= {
@@ -216,6 +217,12 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
     if(!parsed.success)
         errorList = Object.keys(parsed.error?.flatten().fieldErrors)
 
+    console.log("Flatten errors:", parsed.error?.flatten().fieldErrors)
+    return {
+        success:false,
+        message: `Error on ${errorList}`,
+        errors: parsed.error?.flatten().fieldErrors
+    }
 
     if (parsed.success) {
         const docBuffer = await generateWithForm({
