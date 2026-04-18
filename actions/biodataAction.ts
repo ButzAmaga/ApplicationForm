@@ -426,7 +426,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     return {
         success: false,
-        message: `Required information is missing from the form. Please check the fields ${errorList.join(", ")}`,
+        message: `Required information is missing from the form. Please check the fields ${errorList.join(", ")} and try again. Please resubmit all images again since it is already removed upon submission.`,
         errors: parsed.error.flatten().fieldErrors
     }
 }

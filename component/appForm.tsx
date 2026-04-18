@@ -113,8 +113,8 @@ export default function ApplicationForm() {
 
 
 
-  //const isLastStep = state.currentStep === STEPS.length;
-  const isLastStep = state.currentStep === 10;
+  const isLastStep = state.currentStep === STEPS.length;
+
 
 
   // ── Success screen ──────────────────────────────────────────────────────────
@@ -150,7 +150,7 @@ export default function ApplicationForm() {
           <p className="text-base-content/50 text-sm mt-1">Fill out all required fields to submit your application</p>
         </div>
 
-        {/* Step Indicator */}
+        {/* Step Indicator 
         <div className="card bg-base-100 shadow-sm border border-base-300 mb-4">
           <div className="card-body p-3 sm:p-4">
             <StepIndicator
@@ -160,6 +160,7 @@ export default function ApplicationForm() {
             />
           </div>
         </div>
+        */}
 
         {/* Form Card */}
         <form action={action} encType="multipart/form-data" className="card bg-base-100 shadow-lg border border-base-300">

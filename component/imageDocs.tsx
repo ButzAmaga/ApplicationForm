@@ -64,7 +64,7 @@ export function Step9Documents({ errors, show }: Step10Props) {
         </svg>
         <div className="text-sm">
           <p className="font-medium">Document Upload</p>
-          <p className="text-base-content/60">Please upload clear, legible scans or photos of your documents. Accepted formats: JPG, PNG, WEBP. Make sure the ratio is <b className="text-red-500">exact to 210x297 A4 size otherwise your submited images will be invalidated</b>.</p>
+          <p className="text-base-content/60">Please upload clear, legible scans or photos of your documents. Accepted formats: JPG, PNG, WEBP. Make sure the <b className="text-red-500">the size of documents is under A4 size to prevent overflow on documents. Make sure images are under 794x1123 pixels.</b>.</p>
         </div>
       </div>
     </div>

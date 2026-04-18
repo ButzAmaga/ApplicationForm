@@ -86,6 +86,7 @@ export const STEPS: StepMeta[] = [
   { id: 6, label: "Education", icon: "🎓", description: "Academic Background" },
   { id: 7, label: "Passport",    icon: "🛂", description: "Passport Information"        },
   { id: 8, label: "Skill & Language",    icon: "✅", description: "Skill & Language Proficiency"        },
-  { id: 9, label: "Declaration",    icon: "✅", description: "Other information"        },
-  { id: 10, label: "Review",    icon: "✅", description: "Confirm & submit"        },
+  { id: 9, label: "Image Docs",    icon: "✅", description: "Other information"        },
+  { id: 10, label: "Declaration",    icon: "✅", description: "Other information"        },
+
 ];
