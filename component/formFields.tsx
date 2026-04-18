@@ -280,22 +280,13 @@ export function CheckboxGroup({
 interface AvatarUploadProps {
     name: string;
     errors?: string[];
-    toggleReset: number
 }
 
-export function AvatarUpload({ name, errors, toggleReset }: AvatarUploadProps) {
+export function AvatarUpload({ name, errors }: AvatarUploadProps) {
     const fileRef = useRef<HTMLInputElement | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
-    /*
-    useEffect(() => {
-        // When the server action finishes and returns (even with errors), 
-        // we wipe the local state and the physical input.
 
-        if (fileRef.current) fileRef.current.value = "";
-            setPreview(null);
-    }, [toggleReset]); // Triggered every time the errors prop updates
-*/
     const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -327,6 +318,8 @@ export function AvatarUpload({ name, errors, toggleReset }: AvatarUploadProps) {
                     </div>
                 </div>
             </div>
+
+            <p className="text-xs text-gray-500">2x2 Head to Neck Picture</p>
 
             <input
                 ref={fileRef}

@@ -4,6 +4,7 @@ import { DeclarationSchema } from "./declaration";
 import { educationStepSchema } from "./educationZod";
 import { EmploymentSchema } from "./employmentZod";
 import { FamilySchema } from "./familyZod";
+import { DocumentsSchema } from "./imagesDocsZod";
 import { ImageSchema } from "./imageZod";
 import { PassportSchema } from "./passportZod";
 import { PersonalSchema } from "./personalZod";
@@ -19,4 +20,5 @@ export const ApplicantSchema =
     .merge(educationStepSchema)
     .merge(PassportSchema)
     .merge(SkillLanguagesSchema)
-    .merge(DeclarationSchema);
+    .merge(DeclarationSchema)
+    .merge(DocumentsSchema)

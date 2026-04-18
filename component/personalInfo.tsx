@@ -19,20 +19,12 @@ type StepPersonalType = {
 
 export function Step1Personal({ errors, show } : StepPersonalType) {
 
-  const [toggleReset, setToggleReset] = useState<number>(0);
-
-  useEffect(() => {
-
-    if(errors)
-      setToggleReset((prev) => prev + 1);
-  }, [errors]);
-
   return (
     
     <div className={`space-y-6 ${show ? "opacity-100 h-auto visible" 
     : "opacity-0 h-0 overflow-hidden invisible"}`}>
       {/* ── Avatar ─────────────────────────────────────────────────────── */}
-      <AvatarUpload name={"avatar"} errors={errors?.avatar} toggleReset={toggleReset}/>
+      <AvatarUpload name={"avatar"} errors={errors?.avatar}/>
 
       {/* ── Identity ───────────────────────────────────────────────────── */}
       <div className="divider text-xs font-semibold tracking-widest text-base-content/50">IDENTITY</div>

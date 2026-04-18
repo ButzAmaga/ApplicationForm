@@ -20,7 +20,7 @@ type Step9Props = {
     setIsReadConfirm: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export function Step9Declaration({ errors, show, isReadConfirm, setIsReadConfirm }: Step9Props) {
+export function Step10Declaration({ errors, show, isReadConfirm, setIsReadConfirm }: Step9Props) {
     return (
         <div className={`space-y-6 ${show ? "block" : "hidden"}`}>
             <div className="divider text-xs font-semibold tracking-widest text-base-content/50">

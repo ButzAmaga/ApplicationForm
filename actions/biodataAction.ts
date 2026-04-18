@@ -14,6 +14,10 @@ import { success } from 'zod';
 
 type ImagesFormData = {
     avatarBase64: string
+    whole_body_picture_base64: string;
+    passport_base64: string;
+    certificate_of_employment_base64: string;
+    additional_documents_base64: string[]
 }
 
 type PersonalFormData = {
@@ -104,14 +108,12 @@ type DeclarationFormData = {
     date_of_application: string;
 };
 
-type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & PassportFormData & SkillLanguagesFormData & DeclarationFormData & {
-    //avatarBase64: string;
-    /*familyMembers: Array<{
-        name: string;
-        relationship: string;
-        phone: string;
-        liveTogether: boolean;
-    }>,*/
+type DocumentsFormData = {
+
+};
+
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & PassportFormData & SkillLanguagesFormData & DeclarationFormData & DocumentsFormData & {
+
 }
 
 export async function generateWithForm(data: combinedType) {
@@ -125,8 +127,35 @@ export async function generateWithForm(data: combinedType) {
             const base64Data = tagValue.split(',')[1] || tagValue;
             return Buffer.from(base64Data, 'base64');
         },
-        getSize() { return [220, 220]; }
+        // Use _ to tell TS "I know this is here, but I'm not using it"
+        getSize(img:any, _tagValue: string, tagName: string, context?: any) {
+            // 1. Handle the small 2x2 photo
+            if (tagName === "avatar" || tagName === "pic2x2") {
+                return [192, 192]; // 2x2 inches = 192px at 96 DPI
+            }
+
+            // 2. Use the image's intrinsic size for everything else
+            if (img && img.size) {
+                // Return the original dimensions [width, height]
+                return [img.size.width, img.size.height];
+            }
+
+            // 3. Fallback if metadata is missing (Standard A4 @ 96DPI)
+            return [794, 1123];
+        },
+        getProps(_img: unknown, _tagValue: string, tagName: string) {
+            if (tagName === "pic2x2") {
+                return { wrap: "inline" as const };
+            }
+
+            return {
+                wrap: "square" as const, // // Pushes text so they don't overlap
+                offsetRelativeFrom: ["page", "page"] as [string, string],
+                offset: { x: 0, y: 0 }
+            };
+        }
     };
+
 
     const doc = new Docxtemplater(zip, {
         modules: [new ImageModule(imageOptions)],
@@ -139,6 +168,8 @@ export async function generateWithForm(data: combinedType) {
         label: status.charAt(0).toUpperCase() + status.slice(1),
         symbol: status.includes(data.civil_status) ? '■' : '□'
     }));
+
+    console.log("Additional Images:", data.additional_documents_base64);
 
     doc.render({
         // Personal info
@@ -167,6 +198,10 @@ export async function generateWithForm(data: combinedType) {
 
         // Avatar
         avatar: data.avatarBase64,
+        whole_body_picture_base64: data.whole_body_picture_base64,
+        passport_base64: data.passport_base64,
+        certificate_of_employment_base64: data.certificate_of_employment_base64,
+        additional_documents_base64: data.additional_documents_base64,
 
         // Family members (table)
         members: data.familyMembers?.map((m) => ({
@@ -235,7 +270,7 @@ export async function generateWithForm(data: combinedType) {
         has_proof_of_work_experience: data.proof_of_work_experience === "yes",
         date_of_application: data.date_of_application,
 
-        name_and_sig : data.full_name.toUpperCase()
+        name_and_sig: data.full_name.toUpperCase()
     });
 
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
@@ -275,7 +310,12 @@ function extractFormData(formData: FormData) {
         whatsapp: formData.get("whatsapp"),
     }
 
-
+    const imageDocs = {
+        whole_body_picture: formData.get("whole_body_picture") as File | null,
+        passport: formData.get("passport") as File | null,
+        certificate_of_employment: formData.get("certificate_of_employment") as File | null,
+        additional_documents: formData.getAll("additional_documents") as File[],
+    };
 
     let family = extractFamilyMembers(formData);
     let employment = extractEmploymentRecords(formData)
@@ -317,7 +357,8 @@ function extractFormData(formData: FormData) {
         education_records,
         ...passport,
         ...skillLanguages,
-        ...declaration
+        ...declaration,
+        ...imageDocs
     }
 }
 
@@ -328,7 +369,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     console.log("raw", rawData)
 
-    const parsed = ApplicantSchema.safeParse(rawData);
+    const parsed = await ApplicantSchema.safeParseAsync(rawData);
 
     console.log("parsed", parsed)
 
@@ -344,7 +385,16 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
         errors: parsed.error?.flatten().fieldErrors
     }*/
 
+
+
     if (parsed.success) {
+
+        const additional_documents_base64 = await Promise.all(parsed.data.additional_documents.map(
+            async (file) => Buffer.from(await file.arrayBuffer()).toString('base64')
+        ))
+        parsed.data.additional_documents.map(item => console.log(item))
+        
+
         const docBuffer = await generateWithForm({
             ...parsed.data,
             date_of_birth: formatDate(parsed.data.date_of_birth),
@@ -357,6 +407,12 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
             employmentRecords: parsed.data.employment_records.map((record) => ({
                 ...record,
             })),
+
+            // Step 9 Documents
+            whole_body_picture_base64: Buffer.from(await parsed.data.whole_body_picture.arrayBuffer()).toString('base64'),
+            passport_base64: Buffer.from(await parsed.data.passport.arrayBuffer()).toString('base64'),
+            certificate_of_employment_base64: Buffer.from(await parsed.data.certificate_of_employment.arrayBuffer()).toString('base64'),
+            additional_documents_base64: additional_documents_base64
         });
 
         // Save the document or do something with it

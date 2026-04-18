@@ -13,7 +13,8 @@ import { Step5Employment } from "./employment";
 import { Step6Education } from "./education";
 import { Step7Passport } from "./passport";
 import { Step8SkillLanguages } from "./skillAndLanguage";
-import { Step9Declaration } from "./declaration";
+import { Step10Declaration } from "./declaration";
+import { Step9Documents } from "./imageDocs";
 
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -113,7 +114,7 @@ export default function ApplicationForm() {
 
 
   //const isLastStep = state.currentStep === STEPS.length;
-  const isLastStep = state.currentStep === 9;
+  const isLastStep = state.currentStep === 10;
 
 
   // ── Success screen ──────────────────────────────────────────────────────────
@@ -192,7 +193,9 @@ export default function ApplicationForm() {
 
               <Step8SkillLanguages errors={formState.errors ?? {}} show={state.currentStep == 8} />
 
-              <Step9Declaration errors={formState.errors ?? {}} show={state.currentStep == 9} isReadConfirm={isReadConfirm} setIsReadConfirm={setIsReadConfirm} />
+              <Step9Documents errors={formState.errors ?? {}} show={state.currentStep == 9} />
+
+              <Step10Declaration errors={formState.errors ?? {}} show={state.currentStep == 10} isReadConfirm={isReadConfirm} setIsReadConfirm={setIsReadConfirm} />
 
               {/*
               {state.currentStep === 5 && (
