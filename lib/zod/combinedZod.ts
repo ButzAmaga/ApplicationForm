@@ -1,5 +1,6 @@
 import { AddressSchema } from "./addressZod";
 import { contactSchema } from "./contact";
+import { educationStepSchema } from "./educationZod";
 import { EmploymentSchema } from "./employmentZod";
 import { FamilySchema } from "./familyZod";
 import { ImageSchema } from "./imageZod";
@@ -12,3 +13,4 @@ export const ApplicantSchema =
     .merge(FamilySchema)
     .merge(ImageSchema)
     .merge(EmploymentSchema)
+    .merge(educationStepSchema)

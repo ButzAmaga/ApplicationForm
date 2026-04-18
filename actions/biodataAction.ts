@@ -8,7 +8,7 @@ import ImageModule from 'docxtemplater-image-module-free'
 
 import { formatDate } from '@/lib/date';
 import { ApplicantSchema } from '@/lib/zod/combinedZod';
-import { extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
+import { extractEducationRecords, extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
 import { success } from 'zod';
 
 
@@ -190,15 +190,18 @@ function extractFormData(formData: FormData) {
 
     let family = extractFamilyMembers(formData);
     let employment = extractEmploymentRecords(formData)
+    let education_records = extractEducationRecords(formData)
 
-    console.log("Employment", employment)
 
     return {
         ...personalData,
         ...address,
         ...contact,
         family_members: family,
-        employment_records: employment
+        employment_records: employment,
+        // education fields
+        educational_attainment: formData.get("educational_attainment"),
+        education_records
     }
 }
 
@@ -210,6 +213,7 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
     console.log("raw", rawData)
 
     const parsed = ApplicantSchema.safeParse(rawData);
+    
     console.log("parsed", parsed)
 
 
