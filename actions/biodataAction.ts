@@ -154,6 +154,10 @@ export async function generateWithForm(data: combinedType) {
         // job experience
         experience: data.employmentRecords,
 
+        // education
+        education_attainment: data.educational_attainment,
+        education_records: data.education_records,
+
         // Sex checkbox helpers (FIXED: use `sex`, not `gender`)
         isMale: data.sex === "male",
         isFemale: data.sex === "female",

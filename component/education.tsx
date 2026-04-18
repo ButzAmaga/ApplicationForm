@@ -8,6 +8,7 @@ type EducationRecord = {
 type StepEducationProps = {
   errors?: {
     education_records?: string[] | undefined;
+    educational_attainment?: string[] | undefined;
   };
   show: boolean;
 };
@@ -40,6 +41,12 @@ export function Step6Education({ errors, show }: StepEducationProps) {
 
   return (
     <div className={`space-y-6 ${show ? "block" : "hidden"}`}>
+      {/* errors for education records */}
+      {errors?.education_records && errors.education_records.map((item,id) => (
+        <div className="alert alert-error" key={id}>
+          <span className="text-sm">{item}</span>
+        </div>
+      ))}
 
       {/* Educational Attainment — outside the member list */}
       <div>
@@ -53,7 +60,7 @@ export function Step6Education({ errors, show }: StepEducationProps) {
           required
           name="educational_attainment"
           options={EDUCATIONAL_ATTAINMENT_OPTIONS}
-          errors={errors?.education_records ?? []}
+          errors={errors?.educational_attainment ?? []}
         />
       </div>
 
