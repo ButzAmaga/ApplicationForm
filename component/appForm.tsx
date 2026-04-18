@@ -172,7 +172,7 @@ export default function ApplicationForm() {
             )}
 
             {/* Remaining fields */}
-            {missingFields.length > 0 && state.currentStep == 10 && (
+            {missingFields.length > 0 && (state.currentStep == 10 || isLastStep) && (
               <div className="alert alert-soft alert-info flex flex-col items-start tooltip tooltip-bottom">
                 <div className="tooltip-content flex flex-col">
                   {missingFields.map((item,id) => <span key={id} className="text-sm text-start">{item}</span>)}
