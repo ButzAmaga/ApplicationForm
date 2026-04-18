@@ -1,12 +1,12 @@
 'use server'
 
 import fs from 'fs';
-import path from 'path';
+import path, { parse } from 'path';
 import PizZip from 'pizzip';
 import Docxtemplater from 'docxtemplater';
 import ImageModule from 'docxtemplater-image-module-free'
 
-import { formatDate } from '@/lib/date';
+import { formatDate, formatDate2 } from '@/lib/date';
 import { ApplicantSchema } from '@/lib/zod/combinedZod';
 import { extractEducationRecords, extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
 import { success } from 'zod';
@@ -410,7 +410,12 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
             whole_body_picture_base64: Buffer.from(await parsed.data.whole_body_picture.arrayBuffer()).toString('base64'),
             passport_base64: Buffer.from(await parsed.data.passport.arrayBuffer()).toString('base64'),
             certificate_of_employment_base64: Buffer.from(await parsed.data.certificate_of_employment.arrayBuffer()).toString('base64'),
-            additional_documents_base64: additional_documents_base64
+            additional_documents_base64: additional_documents_base64,
+
+            date_of_application: formatDate(parsed.data.date_of_application),
+            passport_valid_from: formatDate2(parsed.data.passport_valid_from),
+            passport_valid_to: formatDate2(parsed.data.passport_valid_to),
+            
         });
 
         // Save the document or do something with it

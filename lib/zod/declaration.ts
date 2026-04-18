@@ -13,10 +13,8 @@ export const DeclarationSchema = z.object({
     .enum(YES_NO, { message: "Please select Yes or No" }),
 
   date_of_application: z
-    .string({ message: "Date of application is required" })
+    .coerce.date()
     .min(1, "Date of application is required")
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Invalid date format",
-    }),
+
 
 });

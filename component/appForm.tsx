@@ -16,6 +16,7 @@ import { Step8SkillLanguages } from "./skillAndLanguage";
 import { Step10Declaration } from "./declaration";
 import { Step9Documents } from "./imageDocs";
 import { findMissingFields } from "@/lib/form";
+import { DataPolicy } from "./data_policy";
 
 
 // ─── State ────────────────────────────────────────────────────────────────────
@@ -171,7 +172,7 @@ export default function ApplicationForm() {
             )}
 
             {/* Remaining fields */}
-            {missingFields.length > 0 && isLastStep && (
+            {missingFields.length > 0 && state.currentStep == 10 && (
               <div className="alert alert-soft alert-info flex flex-col items-start tooltip tooltip-bottom">
                 <div className="tooltip-content flex flex-col">
                   {missingFields.map((item,id) => <span key={id} className="text-sm text-start">{item}</span>)}
@@ -211,7 +212,10 @@ export default function ApplicationForm() {
 
               <Step9Documents errors={formState.errors ?? {}} show={state.currentStep == 9} isPending={isPending} />
 
+
               <Step10Declaration errors={formState.errors ?? {}} show={state.currentStep == 10} isReadConfirm={isReadConfirm} setIsReadConfirm={setIsReadConfirm} />
+
+              <DataPolicy show={state.currentStep == 11} />
 
               {/*
               {state.currentStep === 5 && (

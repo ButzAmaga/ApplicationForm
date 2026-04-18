@@ -9,11 +9,11 @@ export const PassportSchema = z
       .max(20, "Passport number must be 20 characters or less"),
 
     passport_valid_from: z
-      .string()
+      .coerce.date()
       .min(1, "Passport valid from date is required"),
 
     passport_valid_to: z
-      .string()
+      .coerce.date()
       .min(1, "Passport valid to date is required"),
   })
   .refine(
