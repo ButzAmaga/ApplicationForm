@@ -287,14 +287,15 @@ export function AvatarUpload({ name, errors, toggleReset }: AvatarUploadProps) {
     const fileRef = useRef<HTMLInputElement | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
 
+    /*
     useEffect(() => {
         // When the server action finishes and returns (even with errors), 
         // we wipe the local state and the physical input.
 
         if (fileRef.current) fileRef.current.value = "";
-        setPreview(null);
+            setPreview(null);
     }, [toggleReset]); // Triggered every time the errors prop updates
-
+*/
     const handleAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -302,7 +303,7 @@ export function AvatarUpload({ name, errors, toggleReset }: AvatarUploadProps) {
         // Create preview
         const url = URL.createObjectURL(file);
         setPreview(url);
-    };
+    }; 
 
     return (
         <div className="flex flex-col items-center gap-3">

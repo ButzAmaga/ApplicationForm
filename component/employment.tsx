@@ -29,6 +29,13 @@ export function Step5Employment({ errors, show }: Step5Props) {
 
   return (
     <div className={`space-y-6 ${show ? "block" : "hidden"}`}>
+
+      {errors?.employment_records && errors.employment_records.map((item,id) => (
+        <div className="alert alert-error" key={id}>
+          <span className="text-sm">{item}</span>
+        </div>
+      ))}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

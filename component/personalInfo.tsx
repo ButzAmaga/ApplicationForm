@@ -22,7 +22,9 @@ export function Step1Personal({ errors, show } : StepPersonalType) {
   const [toggleReset, setToggleReset] = useState<number>(0);
 
   useEffect(() => {
-    setToggleReset((prev) => prev + 1);
+
+    if(errors)
+      setToggleReset((prev) => prev + 1);
   }, [errors]);
 
   return (

@@ -8,11 +8,12 @@ import ImageModule from 'docxtemplater-image-module-free'
 
 import { formatDate } from '@/lib/date';
 import { ApplicantSchema } from '@/lib/zod/combinedZod';
-import { extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
+import { extractEducationRecords, extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
+import { success } from 'zod';
 
 
-type ImagesFormData= {
-    avatarBase64:string
+type ImagesFormData = {
+    avatarBase64: string
 }
 
 type PersonalFormData = {
@@ -29,7 +30,7 @@ type PersonalFormData = {
     sex: string;
     civil_status: string;
     employment_record: string;
-    avatar:File
+    avatar: File
 };
 
 type AddressFormData = {
@@ -58,13 +59,52 @@ type EmploymentFormData = {
         to: string;
         position: string;
         reason_for_leaving: string;
-        job_descriptions: string[];   
-        name_address:string
-        
+        job_descriptions: string[];
+        name_address: string
+
     }[]
 }
 
-type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & {
+type EducationRecord = {
+    level: string;
+    school: string;
+    from: string;
+    to: string;
+    major_course?: string;
+};
+
+type EducationFormData = {
+    educational_attainment: string;
+    education_records: EducationRecord[];
+};
+
+type PassportFormData = {
+    passport_no: string;
+    passport_valid_from: string;
+    passport_valid_to: string;
+};
+
+type SkillLanguagesFormData = {
+    skill?: string;
+
+    english_speak: string;
+    english_write: string;
+
+    chinese_speak?: string;
+    chinese_write?: string;
+
+    other_speak?: string;
+    other_write?: string;
+};
+
+type DeclarationFormData = {
+    criminal_record: string;
+    education_certification: string;
+    proof_of_work_experience: string;
+    date_of_application: string;
+};
+
+type combinedType = PersonalFormData & AddressFormData & ContactFormData & FamilyMemberFormData & ImagesFormData & EmploymentFormData & EducationFormData & PassportFormData & SkillLanguagesFormData & DeclarationFormData & {
     //avatarBase64: string;
     /*familyMembers: Array<{
         name: string;
@@ -85,7 +125,7 @@ export async function generateWithForm(data: combinedType) {
             const base64Data = tagValue.split(',')[1] || tagValue;
             return Buffer.from(base64Data, 'base64');
         },
-        getSize() { return [250, 250]; }
+        getSize() { return [220, 220]; }
     };
 
     const doc = new Docxtemplater(zip, {
@@ -131,13 +171,17 @@ export async function generateWithForm(data: combinedType) {
         // Family members (table)
         members: data.familyMembers?.map((m) => ({
             ...m,
-            
+
             isYes: m.living_together,
             isNo: !m.living_together,
         })),
 
         // job experience
         experience: data.employmentRecords,
+
+        // education
+        education_attainment: data.educational_attainment,
+        education_records: data.education_records,
 
         // Sex checkbox helpers (FIXED: use `sex`, not `gender`)
         isMale: data.sex === "male",
@@ -148,6 +192,50 @@ export async function generateWithForm(data: combinedType) {
 
         // Employment record
         employment_record: data.employment_record,
+
+        // Passport
+        passport_no: data.passport_no,
+        passport_valid_from: data.passport_valid_from,
+        passport_valid_to: data.passport_valid_to,
+
+        // Skill Languages
+        // Language proficiency helpers
+        skill: data.skill,
+
+        // English proficiency flags
+        is_english_fluent: data.english_speak === "Fluent",
+        is_english_ordinary: data.english_speak === "Ordinary",
+        is_english_difference: data.english_speak === "Difference",
+
+        is_english_write_fluent: data.english_write === "Fluent",
+        is_english_write_ordinary: data.english_write === "Ordinary",
+        is_english_write_difference: data.english_write === "Difference",
+
+        // Chinese proficiency flags
+        is_chinese_fluent: data.chinese_speak === "Fluent",
+        is_chinese_ordinary: data.chinese_speak === "Ordinary",
+        is_chinese_difference: data.chinese_speak === "Difference",
+
+        is_chinese_write_fluent: data.chinese_write === "Fluent",
+        is_chinese_write_ordinary: data.chinese_write === "Ordinary",
+        is_chinese_write_difference: data.chinese_write === "Difference",
+
+        // Other language proficiency flags
+        is_other_fluent: data.other_speak === "Fluent",
+        is_other_ordinary: data.other_speak === "Ordinary",
+        is_other_difference: data.other_speak === "Difference",
+
+        is_other_write_fluent: data.other_write === "Fluent",
+        is_other_write_ordinary: data.other_write === "Ordinary",
+        is_other_write_difference: data.other_write === "Difference",
+
+        // declaration
+        has_criminal_record: data.criminal_record === "yes",
+        has_education_certification: data.education_certification === "yes",
+        has_proof_of_work_experience: data.proof_of_work_experience === "yes",
+        date_of_application: data.date_of_application,
+
+        name_and_sig : data.full_name.toUpperCase()
     });
 
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
@@ -187,17 +275,49 @@ function extractFormData(formData: FormData) {
         whatsapp: formData.get("whatsapp"),
     }
 
+
+
     let family = extractFamilyMembers(formData);
     let employment = extractEmploymentRecords(formData)
+    let education_records = extractEducationRecords(formData)
 
-    console.log("Employment", employment)
+    const passport = {
+        passport_no: formData.get("passport_no"),
+        passport_valid_from: formData.get("passport_valid_from"),
+        passport_valid_to: formData.get("passport_valid_to"),
+    };
 
+    const skillLanguages = {
+        skill: formData.get("skill"),
+
+        english_speak: formData.get("english_speak"),
+        english_write: formData.get("english_write"),
+
+        chinese_speak: formData.get("chinese_speak"),
+        chinese_write: formData.get("chinese_write"),
+
+        other_speak: formData.get("other_speak"),
+        other_write: formData.get("other_write"),
+    }
+
+    const declaration = {
+        criminal_record: formData.get("criminal_record"),
+        education_certification: formData.get("education_certification"),
+        proof_of_work_experience: formData.get("proof_of_work_experience"),
+        date_of_application: formData.get("date_of_application"),
+    };
     return {
         ...personalData,
         ...address,
         ...contact,
         family_members: family,
-        employment_records: employment
+        employment_records: employment,
+        // education fields
+        educational_attainment: formData.get("educational_attainment"),
+        education_records,
+        ...passport,
+        ...skillLanguages,
+        ...declaration
     }
 }
 
@@ -205,23 +325,30 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     const rawData = extractFormData(formData)
 
-    
+
     console.log("raw", rawData)
 
     const parsed = ApplicantSchema.safeParse(rawData);
+
     console.log("parsed", parsed)
 
 
-    let errorList:string[] = []
-    if(!parsed.success)
+    let errorList: string[] = []
+    if (!parsed.success)
         errorList = Object.keys(parsed.error?.flatten().fieldErrors)
 
+    // console.log("Flatten errors:", parsed.error?.flatten().fieldErrors)
+    /*return {
+        success:false,
+        message: `Error on ${errorList}`,
+        errors: parsed.error?.flatten().fieldErrors
+    }*/
 
     if (parsed.success) {
         const docBuffer = await generateWithForm({
             ...parsed.data,
             date_of_birth: formatDate(parsed.data.date_of_birth),
-            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.present_address,
+            permanent_address: parsed.data.permanent_address == "on" ? "same as the present address" : parsed.data.permanent_address,
             familyMembers: parsed.data.family_members.map(m => ({
                 ...m,
                 living_together: m.living_together == "yes" ? true : false
