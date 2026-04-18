@@ -90,11 +90,11 @@ type SkillLanguagesFormData = {
     english_speak: string;
     english_write: string;
 
-    chinese_speak?: string;
-    chinese_write?: string;
+    chinese_speak?: string | null;
+    chinese_write?: string | null;
 
-    other_speak?: string;
-    other_write?: string;
+    other_speak?: string | null;
+    other_write?: string | null;
 };
 
 type DeclarationFormData = {
