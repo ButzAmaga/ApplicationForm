@@ -34,7 +34,6 @@ type PersonalFormData = {
     constellation: string;
     sex: string;
     civil_status: string;
-    employment_record: string;
     avatar: File
 };
 
@@ -227,8 +226,6 @@ export async function generateWithForm(data: combinedType) {
         // Raw civil status (if needed)
         civil_status: civil_status_list,
 
-        // Employment record
-        employment_record: data.employment_record,
 
         // Passport
         passport_no: data.passport_no,
@@ -296,7 +293,6 @@ function extractFormData(formData: FormData) {
         constellation: formData.get("constellation"),
         sex: formData.get("sex"),
         civil_status: formData.get("civil_status"),
-        employment_record: formData.get("employment_record"),
         avatar: formData.get("avatar")
     };
 

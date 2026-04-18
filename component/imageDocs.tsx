@@ -58,7 +58,7 @@ export function Step9Documents({ errors, show, isPending }: Step10Props) {
         label="Additional Documents"
         required
         errors={errors?.additional_documents}
-        hint="file size < 800kb"
+        hint="Other documents such college certification, training certificate, etc."
         isPending={isPending}
       />
 
@@ -69,7 +69,7 @@ export function Step9Documents({ errors, show, isPending }: Step10Props) {
         </svg>
         <div className="text-sm">
           <p className="font-medium">Document Upload</p>
-          <p className="text-base-content/60">Please upload clear, legible scans or photos of your documents. Accepted formats: JPG, PNG, WEBP. Make sure the <b className="text-red-500">the size of documents is under A4 size to prevent overflow on documents. Make sure images are under 794x1123 pixels.</b>.</p>
+          <p className="text-base-content/60">Please upload clear, legible scans or photos of your documents. Accepted formats: JPG, PNG, WEBP. Make sure that <b className="text-red-500">the size of documents is under A4 size to prevent overflow on documents and less than 800kb to ensure successful uploads.</b>.</p>
         </div>
       </div>
     </div>

@@ -132,16 +132,7 @@ export function Step1Personal({ errors, show, isPending } : StepPersonalType) {
         />
       </div>
 
-      {/* ── Employment ─────────────────────────────────────────────────── */}
-      <div className="divider text-xs font-semibold tracking-widest text-base-content/50">EMPLOYMENT</div>
-      <TextArea
-        label="Employment Record" required
-        hint=""
-        errors={errors?.employment_record}
-        placeholder="List your relevant work experience, make it short... (ex:Same job experience in the same industry as the position applied for or Waiter, Cook, Cleaner)"
-        rows={4}
-        name="employment_record"
-      />
+
     </div>
   );
 }
