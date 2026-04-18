@@ -125,7 +125,7 @@ export async function generateWithForm(data: combinedType) {
             const base64Data = tagValue.split(',')[1] || tagValue;
             return Buffer.from(base64Data, 'base64');
         },
-        getSize() { return [200, 200]; }
+        getSize() { return [220, 220]; }
     };
 
     const doc = new Docxtemplater(zip, {
@@ -203,31 +203,31 @@ export async function generateWithForm(data: combinedType) {
         skill: data.skill,
 
         // English proficiency flags
-        is_english_fluent: data.english_speak === "fluent",
-        is_english_ordinary: data.english_speak === "ordinary",
-        is_english_difference: data.english_speak === "difference",
+        is_english_fluent: data.english_speak === "Fluent",
+        is_english_ordinary: data.english_speak === "Ordinary",
+        is_english_difference: data.english_speak === "Difference",
 
-        is_english_write_fluent: data.english_write === "fluent",
-        is_english_write_ordinary: data.english_write === "ordinary",
-        is_english_write_difference: data.english_write === "difference",
+        is_english_write_fluent: data.english_write === "Fluent",
+        is_english_write_ordinary: data.english_write === "Ordinary",
+        is_english_write_difference: data.english_write === "Difference",
 
         // Chinese proficiency flags
-        is_chinese_fluent: data.chinese_speak === "fluent",
-        is_chinese_ordinary: data.chinese_speak === "ordinary",
-        is_chinese_difference: data.chinese_speak === "difference",
+        is_chinese_fluent: data.chinese_speak === "Fluent",
+        is_chinese_ordinary: data.chinese_speak === "Ordinary",
+        is_chinese_difference: data.chinese_speak === "Difference",
 
-        is_chinese_write_fluent: data.chinese_write === "fluent",
-        is_chinese_write_ordinary: data.chinese_write === "ordinary",
-        is_chinese_write_difference: data.chinese_write === "difference",
+        is_chinese_write_fluent: data.chinese_write === "Fluent",
+        is_chinese_write_ordinary: data.chinese_write === "Ordinary",
+        is_chinese_write_difference: data.chinese_write === "Difference",
 
         // Other language proficiency flags
-        is_other_fluent: data.other_speak === "fluent",
-        is_other_ordinary: data.other_speak === "ordinary",
-        is_other_difference: data.other_speak === "difference",
+        is_other_fluent: data.other_speak === "Fluent",
+        is_other_ordinary: data.other_speak === "Ordinary",
+        is_other_difference: data.other_speak === "Difference",
 
-        is_other_write_fluent: data.other_write === "fluent",
-        is_other_write_ordinary: data.other_write === "ordinary",
-        is_other_write_difference: data.other_write === "difference",
+        is_other_write_fluent: data.other_write === "Fluent",
+        is_other_write_ordinary: data.other_write === "Ordinary",
+        is_other_write_difference: data.other_write === "Difference",
 
         // declaration
         has_criminal_record: data.criminal_record === "yes",
@@ -290,14 +290,14 @@ function extractFormData(formData: FormData) {
     const skillLanguages = {
         skill: formData.get("skill"),
 
-        english_speak: formData.getAll("english_speak"),
-        english_write: formData.getAll("english_write"),
+        english_speak: formData.get("english_speak"),
+        english_write: formData.get("english_write"),
 
-        chinese_speak: formData.getAll("chinese_speak"),
-        chinese_write: formData.getAll("chinese_write"),
+        chinese_speak: formData.get("chinese_speak"),
+        chinese_write: formData.get("chinese_write"),
 
-        other_speak: formData.getAll("other_speak"),
-        other_write: formData.getAll("other_write"),
+        other_speak: formData.get("other_speak"),
+        other_write: formData.get("other_write"),
     }
 
     const declaration = {

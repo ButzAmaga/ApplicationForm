@@ -54,7 +54,7 @@ export function Step7Passport({ errors, show }: Step7Props) {
         </svg>
         <div className="text-sm">
           <p className="font-medium">Passport Information</p>
-          <p className="text-base-content/60">"Ensure your passport is valid and accurate. Additionally, your passport number will not be shared outside the application's intended purpose</p>
+          <p className="text-base-content/60">Ensure your passport is valid and accurate. Additionally, your passport number will not be shared outside the application's intended purpose</p>
         </div>
       </div>
     </div>

@@ -87,6 +87,16 @@ export function Step9Declaration({ errors, show, isReadConfirm, setIsReadConfirm
                     </span>
                 </label>
             </div>
+            {/* Submition tips */}
+            <div className="alert shadow-sm bg-base-200">
+                <svg className="w-5 h-5 text-info shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div className="text-sm">
+                    <p className="font-medium">Important</p>
+                    <p className="text-base-content/60">If picture submission fails, please reupload the images, as this may be caused by the browser’s default security protection. If the Submit button does not respond, please check all required fields first.</p>
+                </div>
+            </div>
         </div>
     );
 }

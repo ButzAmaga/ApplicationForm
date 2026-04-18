@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const proficiencyOptions = ["fluent", "ordinary", "difference", ""] as const;
+const proficiencyOptions = ["Fluent", "Ordinary", "Difference"] ;
 
 export const SkillLanguagesSchema = z.object({
   skill: z
@@ -9,24 +9,20 @@ export const SkillLanguagesSchema = z.object({
     .optional()
     .or(z.literal("")),
 
-  english_speak: z.enum(proficiencyOptions),
+  english_speak: z.enum(proficiencyOptions, {error:"Required"}),
 
-  english_write: z.enum(proficiencyOptions),
+  english_write: z.enum(proficiencyOptions, {error:"Required"}),
 
-  chinese_speak: z.enum(proficiencyOptions)
-    .optional()
-    .default(""),
+  chinese_speak: z.enum(proficiencyOptions).nullish(),
+    
 
-  chinese_write: z.enum(proficiencyOptions)
-    .optional()
-    .default(""),
+  chinese_write: z.enum(proficiencyOptions).nullish(),
 
-  other_speak: z.enum(proficiencyOptions)
-    .optional()
-    .default(""),
 
-  other_write: z.enum(proficiencyOptions)
-    .optional()
-    .default("")
+  other_speak: z.enum(proficiencyOptions).nullish(),
+
+
+  other_write: z.enum(proficiencyOptions).nullish(),
+
 });
 
