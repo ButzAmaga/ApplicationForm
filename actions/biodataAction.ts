@@ -19,7 +19,7 @@ type ImagesFormData = {
     whole_body_picture_base64: string | null;
     passport_base64: string | null;
     certificate_of_employment_base64: string | null;
-    additional_documents_base64: string[];
+    additional_documents_base64: (string | null)[];
 }
 
 type PersonalFormData = {
@@ -309,10 +309,10 @@ function extractFormData(formData: FormData) {
     }
 
     const imageDocs = {
-        whole_body_picture: formData.get("whole_body_picture") as File | null,
-        passport: formData.get("passport") as File | null,
-        certificate_of_employment: formData.get("certificate_of_employment") as File | null,
-        additional_documents: formData.getAll("additional_documents") as File[],
+        whole_body_picture: formData.get("whole_body_picture"),
+        passport: formData.get("passport"),
+        certificate_of_employment: formData.get("certificate_of_employment"),
+        additional_documents: formData.getAll("additional_documents"),
     };
 
     let family = extractFamilyMembers(formData);
@@ -388,9 +388,9 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
     if (parsed.success) {
 
         const additional_documents_base64 = await Promise.all(parsed.data.additional_documents.map(
-            async (file) => Buffer.from(await file.arrayBuffer()).toString('base64')
+            async (file_id) => await getImageBufferBase64(file_id)
         ))
-        parsed.data.additional_documents.map(item => console.log(item))
+    
         
 
         const docBuffer = await generateWithForm({

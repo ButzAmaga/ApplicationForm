@@ -159,6 +159,7 @@ export const DocumentsSchema = z.object({
   whole_body_picture: z.string().min(1, "Whole body picture is required"),
   passport: z.string().min(1, "Passport is required"),
   certificate_of_employment: z.string().min(1, "Certificate of employment is required"),
-  additional_documents: multiA4ImageSchema,
+  additional_documents: z.array(z.string()).max(10, "You may upload a maximum of 10 additional documents.").optional()
+  .default([]),
 });
 
