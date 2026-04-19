@@ -158,6 +158,7 @@ export function Step6Education({ errors, show }: StepEducationProps) {
                     name={`education_records_${idx}_major_course`}
                     errors={[]}
                     placeholder="e.g. BS Computer Science"
+                    hint="N/A if none"
                   />
                 </div>
 
