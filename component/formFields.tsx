@@ -204,7 +204,7 @@ export function Select({
                 {options.map((o, id) =>
 
                     <option key={o.value} value={o.value} >
-                        {o.label}
+                        {o.label.charAt(0).toUpperCase() + o.label.slice(1)}
                     </option>
                 )}
 
@@ -264,7 +264,7 @@ export function CheckboxGroup({
                                 }`}
                         />
                         <span className="text-sm group-hover:text-primary transition-colors">
-                            {opt}
+                            {opt.charAt(0).toUpperCase() + opt.slice(1)}
                         </span>
                     </label>
                 ))}
