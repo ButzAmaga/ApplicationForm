@@ -2,7 +2,8 @@
 
 import { FormAppErrors, FormErrors } from "@/lib/types";
 import { useEffect, useRef, useState } from "react";
-import { TextInput, Select, CheckboxGroup, TextArea, NumberInput, DateInput, AvatarUpload } from "./formFields";
+import { TextInput, Select, CheckboxGroup, TextArea, NumberInput, DateInput } from "./formFields";
+import { AvatarUpload } from "./formFieldsC_cloudinary";
 
 const SEX_OPTIONS = ["male", "female"];
 const STATUS_OPTIONS = ["single", "married", "divorce"];
@@ -26,6 +27,7 @@ export function Step1Personal({ errors, show, isPending } : StepPersonalType) {
     : "opacity-0 h-0 overflow-hidden invisible"}`}>
       {/* ── Avatar ─────────────────────────────────────────────────────── */}
       <AvatarUpload name={"avatar"} errors={errors?.avatar} isPending={isPending}/>
+      
 
       {/* ── Identity ───────────────────────────────────────────────────── */}
       <div className="divider text-xs font-semibold tracking-widest text-base-content/50">IDENTITY</div>

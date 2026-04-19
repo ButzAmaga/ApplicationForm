@@ -156,9 +156,9 @@ const multiA4ImageSchema = z
 /* ─── Step 9 Documents Schema ───────────────────────────────── */
 
 export const DocumentsSchema = z.object({
-  whole_body_picture: requiredA4,
-  passport: requiredA4,
-  certificate_of_employment: requiredA4,
+  whole_body_picture: z.string().min(1, "Whole body picture is required"),
+  passport: z.string().min(1, "Passport is required"),
+  certificate_of_employment: z.string().min(1, "Certificate of employment is required"),
   additional_documents: multiA4ImageSchema,
 });
 

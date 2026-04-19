@@ -11,14 +11,15 @@ import { ApplicantSchema } from '@/lib/zod/combinedZod';
 import { extractEducationRecords, extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
 import { success } from 'zod';
 import sizeOf from 'image-size'
+import { getImageBufferBase64 } from './docsProccesor';
 
 
 type ImagesFormData = {
-    avatarBase64: string
-    whole_body_picture_base64: string;
-    passport_base64: string;
-    certificate_of_employment_base64: string;
-    additional_documents_base64: string[]
+    avatarBase64: string | null;
+    whole_body_picture_base64: string | null;
+    passport_base64: string | null;
+    certificate_of_employment_base64: string | null;
+    additional_documents_base64: string[];
 }
 
 type PersonalFormData = {
@@ -34,7 +35,6 @@ type PersonalFormData = {
     constellation: string;
     sex: string;
     civil_status: string;
-    avatar: File
 };
 
 type AddressFormData = {
@@ -401,15 +401,15 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
                 ...m,
                 living_together: m.living_together == "yes" ? true : false
             })) || [],
-            avatarBase64: Buffer.from(await parsed.data.avatar.arrayBuffer()).toString('base64'),
+            avatarBase64: await getImageBufferBase64(parsed.data.avatar),
             employmentRecords: parsed.data.employment_records?.map((record) => ({
                 ...record,
             })) || [],
 
             // Step 9 Documents
-            whole_body_picture_base64: Buffer.from(await parsed.data.whole_body_picture.arrayBuffer()).toString('base64'),
-            passport_base64: Buffer.from(await parsed.data.passport.arrayBuffer()).toString('base64'),
-            certificate_of_employment_base64: Buffer.from(await parsed.data.certificate_of_employment.arrayBuffer()).toString('base64'),
+            whole_body_picture_base64: await getImageBufferBase64(parsed.data.whole_body_picture),
+            passport_base64: await getImageBufferBase64(parsed.data.passport),
+            certificate_of_employment_base64: await getImageBufferBase64(parsed.data.certificate_of_employment),
             additional_documents_base64: additional_documents_base64,
 
             date_of_application: formatDate(parsed.data.date_of_application),

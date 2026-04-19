@@ -22,7 +22,6 @@ const FileValidator = z
   );
 
 export const ImageSchema = z.object({
-  avatar: FileValidator,
-
+  avatar: z.string().min(1, "Avatar is required")
 });
 

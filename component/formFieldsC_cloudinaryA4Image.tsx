@@ -1,0 +1,300 @@
+"use client";
+
+import { useState, useRef } from "react";
+
+// ─── Cloudinary config ────────────────────────────────────────────────────────
+// Add these to your .env.local:
+//   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+//   NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_unsigned_preset
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+const UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+const DELETE_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/delete_by_token`;
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface CloudinaryUploadResponse {
+  public_id: string;
+  secure_url: string;
+  delete_token: string;
+}
+
+type ImageUploadA4Props = {
+  label?: string;
+  name: string;           // name of the hidden input — read by the server action
+  required?: boolean;
+  errors?: string[];
+  hint?: string;
+  isPending?: boolean;
+  defaultPublicId?: string;
+  defaultPreviewUrl?: string;
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+async function uploadToCloudinary(file: File): Promise<CloudinaryUploadResponse> {
+  const form = new FormData();
+  form.append("file", file);
+  form.append("upload_preset", UPLOAD_PRESET);
+
+  const res = await fetch(UPLOAD_URL, { method: "POST", body: form });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message ?? "Upload failed");
+  }
+  return res.json();
+}
+
+async function deleteByToken(deleteToken: string): Promise<void> {
+  await fetch(DELETE_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ token: deleteToken }),
+  }).catch(() => {
+    // Silent — token may have expired; not a fatal error.
+  });
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export function ImageUploadA4({
+  label = "Upload Document",
+  name,
+  required = false,
+  errors,
+  hint,
+  isPending = false,
+  defaultPublicId = "",
+  defaultPreviewUrl = "",
+}: ImageUploadA4Props) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const [preview, setPreview] = useState<string | null>(defaultPreviewUrl || null);
+  const [publicId, setPublicId] = useState<string>(defaultPublicId);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  // Holds the short-lived delete token for the currently uploaded image
+  const deleteTokenRef = useRef<string | null>(null);
+
+  const isDisabled = isUploading || isPending;
+
+  // ── Core upload logic ──────────────────────────────────────────────────────
+  const handleFile = async (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    setUploadError(null);
+
+    // Delete the previous image if one exists
+    if (deleteTokenRef.current) {
+      await deleteByToken(deleteTokenRef.current);
+      deleteTokenRef.current = null;
+    }
+
+    // Optimistic local preview
+    const localUrl = URL.createObjectURL(file);
+    setPreview(localUrl);
+    setPublicId("");
+
+    try {
+      setIsUploading(true);
+      const data = await uploadToCloudinary(file);
+
+      URL.revokeObjectURL(localUrl);
+      setPreview(data.secure_url);
+      setPublicId(data.public_id);
+      deleteTokenRef.current = data.delete_token;
+    } catch (err) {
+      URL.revokeObjectURL(localUrl);
+      setPreview(null);
+      setUploadError(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setIsUploading(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    if (isDisabled) return;
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFile(file);
+  };
+
+  const handleClear = async () => {
+    if (deleteTokenRef.current) {
+      await deleteByToken(deleteTokenRef.current);
+      deleteTokenRef.current = null;
+    }
+    setPreview(null);
+    setPublicId("");
+    setUploadError(null);
+    if (inputRef.current) inputRef.current.value = "";
+  };
+
+  return (
+    <div className="form-control w-full gap-1">
+      {/* Label */}
+      {label && (
+        <label className="label pb-1">
+          <span className="label-text font-medium">
+            {label}
+            {required && <span className="text-error ml-1">*</span>}
+          </span>
+          {hint && <span className="label-text-alt text-base-content/50">{hint}</span>}
+        </label>
+      )}
+
+      {/* A4 Preview Area */}
+      <div
+        className={`relative w-full mx-auto border-2 rounded-lg overflow-hidden transition-colors
+          ${isDragging ? "border-primary bg-primary/5" : errors?.length ? "border-error" : "border-base-300"}
+          ${isDisabled ? "opacity-60 pointer-events-none" : ""}
+        `}
+        style={{ aspectRatio: "210 / 297", maxWidth: "360px" }}
+        onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
+      >
+        {preview ? (
+          <>
+            <img
+              src={preview}
+              alt="Document preview"
+              className="w-full h-full object-cover"
+            />
+
+            {/* Upload spinner overlay */}
+            {isUploading && (
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <span className="loading loading-spinner loading-md text-white" />
+              </div>
+            )}
+
+            {/* Clear button */}
+            {!isUploading && (
+              <button
+                type="button"
+                onClick={handleClear}
+                className="absolute top-2 right-2 btn btn-xs btn-error btn-circle shadow"
+                aria-label="Remove image"
+              >
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </>
+        ) : (
+          /* Placeholder */
+          <div className="w-full h-full bg-base-200 flex flex-col items-center justify-center gap-3 p-6 select-none">
+            {isUploading ? (
+              <span className="loading loading-spinner loading-lg text-primary" />
+            ) : (
+              <>
+                <div className="w-24 opacity-30">
+                  <svg viewBox="0 0 96 128" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-base-content">
+                    <rect x="4" y="4" width="88" height="120" rx="4" fill="currentColor" fillOpacity="0.15" stroke="currentColor" strokeWidth="3"/>
+                    <path d="M20 30h56M20 44h56M20 58h56M20 72h40" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
+                    <rect x="20" y="84" width="28" height="28" rx="2" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="2"/>
+                    <circle cx="28" cy="93" r="4" fill="currentColor" fillOpacity="0.4"/>
+                    <path d="M20 112l10-10 6 6 4-4 8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+
+                <div className="text-center">
+                  <p className="text-sm font-medium text-base-content/60">A4 Document Preview</p>
+                  <p className="text-xs text-base-content/40 mt-1">Drag & drop or click to upload</p>
+                </div>
+
+                <svg className="w-6 h-6 text-base-content/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+
+                <button
+                  type="button"
+                  onClick={() => inputRef.current?.click()}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  aria-label="Click to upload"
+                />
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Action buttons */}
+      <div className="flex gap-2 mt-2 max-w-90 mx-auto w-full">
+        <button
+          type="button"
+          onClick={() => inputRef.current?.click()}
+          className="btn btn-primary btn-sm flex-1"
+          disabled={isDisabled}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          {isUploading ? "Uploading…" : preview ? "Change File" : "Upload File"}
+        </button>
+
+        {preview && !isUploading && (
+          <button
+            type="button"
+            onClick={handleClear}
+            className="btn btn-outline btn-error btn-sm"
+            disabled={isDisabled}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Remove
+          </button>
+        )}
+      </div>
+
+      {/*
+       * Hidden file input — no name here; value goes via the hidden text
+       * input below so the server action receives the Cloudinary public_id.
+       *
+       * Usage in your server action:
+       *   const publicId = formData.get("documentPublicId") as string;
+       */}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleChange}
+        disabled={isDisabled}
+      />
+
+      {/* Hidden text input carrying the Cloudinary public_id to the server */}
+      <input
+        type="hidden"
+        name={name}
+        value={publicId}
+      />
+
+      {/* Footer hint */}
+      <label className="label pt-1 max-w-90 mx-auto w-full">
+        <span className="label-text-alt text-base-content/40">Accepted: JPG, PNG, WEBP</span>
+        {publicId && <span className="label-text-alt text-success">✓ Uploaded</span>}
+      </label>
+
+      {/* Upload error */}
+      {uploadError && (
+        <p className="text-error text-xs mt-1">{uploadError}</p>
+      )}
+
+      {/* Server-side validation errors */}
+      {errors?.map((error, i) => (
+        <p key={i} className="text-error text-xs mt-1">{error}</p>
+      ))}
+    </div>
+  );
+}

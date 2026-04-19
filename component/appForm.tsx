@@ -19,6 +19,7 @@ import { findMissingFields } from "@/lib/form";
 import { DataPolicy } from "./data_policy";
 
 
+
 // ─── State ────────────────────────────────────────────────────────────────────
 interface WizardState {
   currentStep: number;
@@ -148,6 +149,7 @@ export default function ApplicationForm() {
           </h1>
           <p className="text-base-content/50 text-sm mt-1">Fill out all required fields to submit your application</p>
         </div>
+
 
         {/* Step Indicator 
         <div className="card bg-base-100 shadow-sm border border-base-300 mb-4">
