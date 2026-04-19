@@ -38,7 +38,7 @@ export function DataPolicy({
 
           {/* Intro */}
           <p className="text-sm text-base-content/70 leading-relaxed">
-            At <span className="font-semibold text-base-content">{companyName}</span>, we value your privacy and are committed to protecting
+            We value your privacy and are committed to protecting
             your personal information. This policy explains how we collect, use, and safeguard
             the biodata you provide during your application process.
           </p>

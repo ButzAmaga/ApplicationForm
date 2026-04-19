@@ -9,9 +9,10 @@ import ImageModule from 'docxtemplater-image-module-free'
 import { formatDate, formatDate2 } from '@/lib/date';
 import { ApplicantSchema } from '@/lib/zod/combinedZod';
 import { extractEducationRecords, extractEmploymentRecords, extractFamilyMembers } from '@/lib/extractorFields';
-import { success } from 'zod';
+
 import sizeOf from 'image-size'
 import { getImageBufferBase64 } from './docsProccesor';
+import { sendDocxWithGmail } from './sendToGmail';
 
 
 type ImagesFormData = {
@@ -418,6 +419,10 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
             
         });
 
+        const sendToGmailResponse = await sendDocxWithGmail(docBuffer, `${parsed.data.full_name}_${Date.now()}_biodata.docx`)
+
+        console.log(sendToGmailResponse)
+
         // Save the document or do something with it
         return {
             success: true,
@@ -429,7 +434,8 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
 
     return {
         success: false,
-        message: `Required information is missing from the form. Please check the fields ${errorList.join(", ")} and try again. Please resubmit all images again since it is already removed upon submission.`,
+        message: `Required information is missing from the form. Please check the fields ${errorList.join(", ")} and try again.`,
         errors: parsed.error.flatten().fieldErrors
     }
 }
+

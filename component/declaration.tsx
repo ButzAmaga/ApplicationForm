@@ -94,7 +94,7 @@ export function Step10Declaration({ errors, show, isReadConfirm, setIsReadConfir
                 </svg>
                 <div className="text-sm">
                     <p className="font-medium">Important</p>
-                    <p className="text-base-content/60">If picture submission fails, please reupload the images, as this may be caused by the browser’s default security protection. If the Submit button does not respond, please check all required fields first.</p>
+                    <p className="text-base-content/60">If the Submit button does not respond, please check all required fields first.</p>
                 </div>
             </div>
         </div>
