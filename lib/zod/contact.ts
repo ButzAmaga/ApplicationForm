@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-// Allows standard local 09xx numbers OR international configurations
-export const globalPhoneRegex = /^(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})$/;
+// Matches local/international numbers OR the text "N/A" (case-insensitive)
+const globalPhoneRegex = /^(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}|N\/A)$/i;
 
-// Allows the local/international numbers above OR clickable WhatsApp link formats
-const whatsappRegex = /^(?:(?:https?:\/\/)?(?:www\.)?(?:wa\.me\/|api\.whatsapp\.com\/send\?phone=)\d+|(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}))$/;
+// Matches WhatsApp URLs, raw numbers, OR the text "N/A" (case-insensitive)
+const whatsappRegex = /^(?:(?:https?:\/\/)?(?:www\.)?(?:wa\.me\/|api\.whatsapp\.com\/send\?phone=)\d+|(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})|N\/A)$/i;
 
 
 export const contactSchema = z.object({
