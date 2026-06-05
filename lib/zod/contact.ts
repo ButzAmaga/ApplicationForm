@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Allows standard local 09xx numbers OR international configurations
-const globalPhoneRegex = /^(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})$/;
+export const globalPhoneRegex = /^(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})$/;
 
 // Allows the local/international numbers above OR clickable WhatsApp link formats
 const whatsappRegex = /^(?:(?:https?:\/\/)?(?:www\.)?(?:wa\.me\/|api\.whatsapp\.com\/send\?phone=)\d+|(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}))$/;

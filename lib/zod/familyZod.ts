@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { globalPhoneRegex } from "./contact";
 
 const FamilyMemberSchema = z.object({
     id: z.number(),
@@ -13,8 +14,8 @@ const FamilyMemberSchema = z.object({
         .string()
         .min(1, "Phone number is required")
         .regex(
-            /^09\d{9}$/,
-            "Invalid Philippine phone number format"
+            globalPhoneRegex,
+            "Invalid phone number format"
         ),
 
 });
