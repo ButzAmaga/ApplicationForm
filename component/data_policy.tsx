@@ -11,7 +11,7 @@ export function DataPolicy({
   show,
   companyName = "[Your Company Name]",
   retentionPeriod = "6 months",
-  dpoEmail = "[Insert Email Address]",
+  dpoEmail = "chinabio2026@gmail.com",
 }: DataPolicyProps) {
   return (
     <div className={`space-y-6 ${show ? "block" : "hidden"}`}>
