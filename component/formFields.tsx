@@ -47,12 +47,13 @@ interface TextInputProps extends InputHTMLAttributes<HTMLInputElement> {
     hint?: string;
 }
 
-export function TextInput({ label, name, errors, hint, required = true }: TextInputProps) {
+export function TextInput({ label, name, errors, hint, required = true, placeholder }: TextInputProps) {
     const [val, setValue] = useState<string>("")
     return (
         <Field label={label} errors={errors} required={required} hint={hint}>
             <input
                 required={required}
+                placeholder={placeholder}
                 className={`input input-bordered w-full transition-all duration-200 focus:input-primary ${errors ? "input-error" : ""
                     }`}
                 onChange={(ev: React.ChangeEvent<HTMLInputElement>) => setValue(ev.target.value)}
@@ -65,12 +66,13 @@ export function TextInput({ label, name, errors, hint, required = true }: TextIn
 
 // ─── Email Input ────────────────────────────────────────────────────────────────
 
-export function EmailInput({ label, name, errors, hint, required = true }: TextInputProps) {
+export function EmailInput({ label, name, errors, hint, required = true, placeholder }: TextInputProps) {
     const [val, setValue] = useState<string>("")
     return (
         <Field label={label} errors={errors} required={required} hint={hint}>
             <input
                 required={required}
+                placeholder={placeholder}
                 type="email"
                 className={`input input-bordered w-full transition-all duration-200 focus:input-primary ${errors ? "input-error" : ""
                     }`}
@@ -84,12 +86,13 @@ export function EmailInput({ label, name, errors, hint, required = true }: TextI
 
 // ─── Number Input ────────────────────────────────────────────────────────────────
 
-export function NumberInput({ label, name, errors, hint, required = true }: TextInputProps) {
+export function NumberInput({ label, name, errors, hint, required = true, placeholder }: TextInputProps) {
     const [val, setValue] = useState<string>("")
     return (
         <Field label={label} errors={errors} required={required} hint={hint}>
             <input
                 required={required}
+                placeholder={placeholder}
                 type="number"
                 className={`input input-bordered w-full transition-all duration-200 focus:input-primary ${errors ? "input-error" : ""
                     }`}
@@ -233,6 +236,7 @@ interface CheckboxGroupProps {
     errors?: string[];
     required?: boolean;
     options: string[];
+    checkedDefault?: string;
 }
 
 
@@ -242,8 +246,9 @@ export function CheckboxGroup({
     errors,
     required = true,
     options,
+    checkedDefault = ""
 }: CheckboxGroupProps) {
-    const [val, setValue] = useState<string | "">("");
+    const [val, setValue] = useState<string | "">(checkedDefault);
 
     return (
         <Field label={label} errors={errors} required={required}>

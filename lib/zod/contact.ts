@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // Matches local/international numbers OR the text "N/A" (case-insensitive)
-const globalPhoneRegex = /^(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}|N\/A)$/i;
+export const globalPhoneRegex = /^(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}|N\/A)$/i;
 
 // Matches WhatsApp URLs, raw numbers, OR the text "N/A" (case-insensitive)
 const whatsappRegex = /^(?:(?:https?:\/\/)?(?:www\.)?(?:wa\.me\/|api\.whatsapp\.com\/send\?phone=)\d+|(?:09\d{9}|(?:\+|00)?[1-9]\d{0,3}[-.\s]?\(?\d{1,4}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9})|N\/A)$/i;

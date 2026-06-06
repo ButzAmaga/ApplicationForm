@@ -48,7 +48,7 @@ export function Step8SkillLanguages({ errors, show, optionalLanguages = [] }: St
         <TextInput 
           label="Special Skill/Training" 
           name="skill" errors={errors?.skill} 
-          hint="e.g. Graphic Design"
+          placeholder="e.g. Graphic Design"
           required={false}
         />
     </div>
@@ -64,7 +64,8 @@ export function Step8SkillLanguages({ errors, show, optionalLanguages = [] }: St
           <h3 className="font-semibold text-sm tracking-wide">
             English <span className="text-error">*</span>
           </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex gap-2">
+            
             <CheckboxGroup
               label="Speaking"
               name="english_speak"
@@ -72,6 +73,9 @@ export function Step8SkillLanguages({ errors, show, optionalLanguages = [] }: St
               options={SPEAK_OPTIONS}
               errors={errors?.english_speak}
             />
+
+            
+
             <CheckboxGroup
               label="Writing"
               name="english_write"

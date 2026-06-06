@@ -135,7 +135,7 @@ function EmploymentEntry({ idx, onRemove }: EmploymentEntryProps) {
             required
             name={`employment_records_${idx}_from`}
             errors={[]}
-            hint="e.g. August 2020"
+            placeholder="e.g. August 2020"
           />
 
           <TextInput
@@ -143,7 +143,7 @@ function EmploymentEntry({ idx, onRemove }: EmploymentEntryProps) {
             required
             name={`employment_records_${idx}_to`}
             errors={[]}
-            hint="e.g. Present"
+            placeholder="e.g. Present"
           />
         </div>
 
@@ -162,7 +162,7 @@ function EmploymentEntry({ idx, onRemove }: EmploymentEntryProps) {
             required
             name={`employment_records_${idx}_name_address`}
             errors={[]}
-            hint="e.g.Libon INC, Tarlac City"
+            placeholder="e.g.Libon INC, Tarlac City"
           />
 
           <TextInput

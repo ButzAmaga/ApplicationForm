@@ -6,6 +6,11 @@ const YES_NO_OPTIONS = [
     "yes", "no"
 ];
 
+const BIO_DATA_TYPE = [
+    "ZhouQuan",
+    "ShangHai"
+]
+
 type Step9Props = {
     errors: {
         criminal_record?: string[] | undefined;
@@ -63,10 +68,16 @@ export function Step10Declaration({ errors, show, isReadConfirm, setIsReadConfir
                     required
                     name="date_of_application"
                     errors={errors?.date_of_application}
+                    defaultValue={new Date().toISOString().split('T')[0]}
                 />
-
-
-
+                <CheckboxGroup
+                    label="Biodata Type"
+                    name="biodata_type"
+                    required
+                    options={BIO_DATA_TYPE}
+                    errors={[]}
+                    checkedDefault="ZhouQuan"
+                />
             </div>
 
             {/* Declaration tips */}

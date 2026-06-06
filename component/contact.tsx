@@ -29,7 +29,7 @@ export function Step3Contact({ errors, show }: Step3Props) {
           required
           name="phone_num"
           errors={errors?.phone_num}
-          placeholder="+63 9XX XXX XXXX"
+          placeholder="+63993xxxxx"
         />
 
         <EmailInput
@@ -51,14 +51,14 @@ export function Step3Contact({ errors, show }: Step3Props) {
           label="Facebook"
           name="facebook"
           errors={errors?.facebook}
-          placeholder="https://facebook.com/username"
+          placeholder="Juan Dela Cruz"
         />
 
         <TextInput
           label="WhatsApp"
           name="whatsapp"
           errors={errors?.whatsapp}
-          placeholder="+63 9XX XXX XXXX"
+          placeholder="+63993xxxxx"
         />
       </div>
 

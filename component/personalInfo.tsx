@@ -70,7 +70,6 @@ export function Step1Personal({ errors, show, isPending } : StepPersonalType) {
           required
           name="age"
           errors={errors?.age}
-          hint="between 16 and 100"
         />
 
         <DateInput
@@ -95,6 +94,7 @@ export function Step1Personal({ errors, show, isPending } : StepPersonalType) {
           name="height"
           errors={errors?.height}
           hint="cm"
+          placeholder="cm format only"
         />
 
         <NumberInput
@@ -103,6 +103,7 @@ export function Step1Personal({ errors, show, isPending } : StepPersonalType) {
           name="weight"
           errors={errors?.weight}
           hint="kg"
+          placeholder="kg format only"
         />
         <Select
           label="Constellation" required
