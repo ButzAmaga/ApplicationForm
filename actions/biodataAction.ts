@@ -13,6 +13,7 @@ import { extractEducationRecords, extractEmploymentRecords, extractFamilyMembers
 import sizeOf from 'image-size'
 import { getImageBufferBase64 } from './docsProccesor';
 import { sendDocxWithGmail } from './sendToGmail';
+import { convertCmToFt } from '@/lib/conversion';
 
 
 type ImagesFormData = {
@@ -120,8 +121,15 @@ type combinedType = PersonalFormData & AddressFormData & ContactFormData & Famil
 
 export async function generateWithForm(data: combinedType) {
 
-    
-    const templatePath = path.resolve(process.cwd(), 'public/template/biodata_template.docx');
+    const templates: Record<string, string> = {
+        ShangHai: 'public/template/biodata_template_shanghai.docx',
+    };
+
+    const template_loc =
+        templates[data.biodata_type] ??
+        'public/template/biodata_template.docx'; // default ZhouQuan
+
+    const templatePath = path.resolve(process.cwd(), template_loc);
     const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);
 
@@ -174,7 +182,12 @@ export async function generateWithForm(data: combinedType) {
         symbol: status.includes(data.civil_status) ? '■' : '□'
     }));
 
-    console.log("Additional Images:", data.additional_documents_base64);
+    // Feet Extraction
+    const height_ft = convertCmToFt(data.height)
+    const height_ft_whole = Math.floor(height_ft); 
+    const height_ft_decimal = Math.round((height_ft - height_ft_whole) * 100);
+
+    
 
     doc.render({
         // Personal info
@@ -188,6 +201,9 @@ export async function generateWithForm(data: combinedType) {
         height: data.height,
         weight: data.weight,
         constellation: data.constellation,
+        ft_w: height_ft_whole,
+        fw_dec: height_ft_decimal,
+        
 
 
         // Address

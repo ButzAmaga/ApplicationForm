@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const YES_NO = ["yes", "no"] as const;
-const BIO_DATA_TYPE = [
+export const BIO_DATA_TYPE = [
     "ZhouQuan",
     "ShangHai"
 ] as const;
