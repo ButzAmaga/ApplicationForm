@@ -108,6 +108,7 @@ export function Step4Family({ errors, show }: Step4Props) {
                   name={`family_members_${idx}_phone`}
                   errors={[]}
                   placeholder="+63993xxxxx"
+                  hint="N/A if none"
                 />
 
                 <CheckboxGroup
