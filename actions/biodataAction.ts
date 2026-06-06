@@ -107,6 +107,7 @@ type DeclarationFormData = {
     education_certification: string;
     proof_of_work_experience: string;
     date_of_application: string;
+    biodata_type:string 
 };
 
 type DocumentsFormData = {
@@ -118,6 +119,8 @@ type combinedType = PersonalFormData & AddressFormData & ContactFormData & Famil
 }
 
 export async function generateWithForm(data: combinedType) {
+
+    
     const templatePath = path.resolve(process.cwd(), 'public/template/biodata_template.docx');
     const content = fs.readFileSync(templatePath, 'binary');
     const zip = new PizZip(content);
@@ -269,6 +272,7 @@ export async function generateWithForm(data: combinedType) {
         has_education_certification: data.education_certification === "yes",
         has_proof_of_work_experience: data.proof_of_work_experience === "yes",
         date_of_application: data.date_of_application,
+        biodata_type: data.biodata_type,
 
         name_and_sig: data.full_name.toUpperCase()
     });
@@ -344,7 +348,9 @@ function extractFormData(formData: FormData) {
         education_certification: formData.get("education_certification"),
         proof_of_work_experience: formData.get("proof_of_work_experience"),
         date_of_application: formData.get("date_of_application"),
+        biodata_type: formData.get("biodata_type"),
     };
+
     return {
         ...personalData,
         ...address,
@@ -416,7 +422,9 @@ export async function saveDocumentAction(prev: any, formData: FormData) {
             date_of_application: formatDate(parsed.data.date_of_application),
             passport_valid_from: formatDate2(parsed.data.passport_valid_from),
             passport_valid_to: formatDate2(parsed.data.passport_valid_to),
-            
+
+            biodata_type: parsed.data.biodata_type,
+
         });
 
         const sendToGmailResponse = await sendDocxWithGmail(docBuffer, `${parsed.data.full_name}_${Date.now()}_biodata.docx`)
