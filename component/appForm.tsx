@@ -115,6 +115,11 @@ export default function ApplicationForm() {
 
   const isLastStep = state.currentStep === STEPS.length;
 
+  const isDisabled =
+    isPending ||
+    !isReadConfirm ||
+    missingFields.length > 0;
+
 
 
   // ── Success screen ──────────────────────────────────────────────────────────
@@ -177,7 +182,7 @@ export default function ApplicationForm() {
             {missingFields.length > 0 && (state.currentStep == 10 || isLastStep) && (
               <div className="alert alert-soft alert-info flex flex-col items-start tooltip tooltip-bottom">
                 <div className="tooltip-content flex flex-col">
-                  {missingFields.map((item,id) => <span key={id} className="text-sm text-start">{item}</span>)}
+                  {missingFields.map((item, id) => <span key={id} className="text-sm text-start">{item}</span>)}
                 </div>
 
                 <div className="flex gap-2">
@@ -232,8 +237,8 @@ export default function ApplicationForm() {
             <div className="flex items-center justify-between pt-4 border-t border-base-300 gap-3">
               <button
                 type="button"
-                onClick={() => { 
-                  setMissingFields(findMissingFields("application-form"))  
+                onClick={() => {
+                  setMissingFields(findMissingFields("application-form"))
                   dispatch({ type: "PREV_STEP" })
                 }}
                 disabled={state.currentStep === 1}
@@ -256,15 +261,33 @@ export default function ApplicationForm() {
 
                 <button
                   type="submit"
-                  disabled={isPending || !isReadConfirm || missingFields.length > 0}
-                  className={`btn btn-success gap-2`}
+                  disabled={isDisabled}
+                  className="btn btn-success gap-2"
                 >
                   {isPending ? (
-                    <><span className="loading loading-spinner loading-sm" /> Submitting…</>
+                    <>
+                      <span className="loading loading-spinner loading-sm" />
+                      Submitting...
+                    </>
+                  ) : isDisabled ? (
+                    "Required Fields are Missing"
                   ) : (
-                    <><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg> {!isReadConfirm || missingFields.length > 0 ? "Required Fields are Missing" : "Submit Application"} </>
+                    <>
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                      Submit Application
+                    </>
                   )}
                 </button>
               ) : (
